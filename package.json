@@ -1,0 +1,31 @@
+{
+  "name": "hapi-rbac",
+  "version": "0.1.0",
+  "description": "Role Based Access Control for Hapijs",
+  "preferGlobal": false,
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "lab -v"
+  },
+  "keywords": [
+    "hapi",
+    "rbac",
+    "ac"
+  ],
+  "author": {
+    "name": "Francisco de Gouveia",
+    "email": "francisco@de-gouveia.eu",
+    "url": "http://de-gouveia.eu"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "code": "^1.5.0",
+    "hapi": "^9.0.3",
+    "hapi-auth-basic": "^3.0.0",
+    "lab": "^5.15.2"
+  },
+  "dependencies": {
+    "async": "^1.4.2",
+    "boom": "^2.8.0"
+  }
+}
