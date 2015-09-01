@@ -86,4 +86,6 @@ If a rule applies, the `effect` is the access decision for that rule. It can be:
 
 When a policy set, policy or rule do not apply (the target don't match), then the decision is `undetermined`. If all the policy sets, policies and rules have the `undetermined` result, then the access is denied, since it is not clear if the user can access or not the route.
 
-To have an idea of how this works, you can check my Bachelor's project presentation [here](http://helios.av.it.pt/attachments/download/559/_en_XACML.PAPOX.Presentation.pdf) (english), or [here](http://helios.av.it.pt/attachments/download/557/_pt_XACML.PAPOX.Presentation.pdf) (portuguese).
+## Learn more
+
+To have a better idea of how this works, you can check my Bachelor's project presentation about XACML [here](http://helios.av.it.pt/attachments/download/559/_en_XACML.PAPOX.Presentation.pdf) (english), or [here](http://helios.av.it.pt/attachments/download/557/_pt_XACML.PAPOX.Presentation.pdf) (portuguese). Even though this plugin doesn't implement the XACML specification, it was based on its policies.
