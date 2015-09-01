@@ -1,4 +1,4 @@
-# hapi-rbac
+# hapi-rbac [![Build Status](https://travis-ci.org/franciscogouveia/hapi-rbac.svg?branch=master)](https://travis-ci.org/franciscogouveia/hapi-rbac)
 
 A Rule Based Access Control module for hapi. This is inspired by the XACML policies.
 
