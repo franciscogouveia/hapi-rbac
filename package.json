@@ -4,6 +4,7 @@
   "description": "Role Based Access Control for Hapijs",
   "preferGlobal": false,
   "main": "lib/index.js",
+  "repository": "git@github.com:franciscogouveia/hapi-rbac.git",
   "scripts": {
     "test": "lab -v"
   },
