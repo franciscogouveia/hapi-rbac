@@ -1,3 +1,5 @@
+'use strict';
+
 var Hapi = require('hapi');
 var Boom = require('boom');
 var Code = require('code');
@@ -7,7 +9,6 @@ var lab = exports.lab = Lab.script();
 var experiment = lab.experiment;
 var test = lab.test;
 var before = lab.before;
-var after = lab.after;
 
 var expect = Code.expect;
 
@@ -24,7 +25,7 @@ experiment("Generic tests, with RBAC plugin configured", function() {
 
     var users = {};
 
-    users['sg1000'] = {
+    users.sg1000 = {
       'scope': 'admin',
       'firstName': 'Some',
       'lastName': 'Guy',
@@ -136,7 +137,7 @@ experiment("RBAC policy, based on username", function() {
 
     var users = {};
 
-    users['sg1001'] = {
+    users.sg1001 = {
       'scope': 'admin',
       'firstName': 'Some',
       'lastName': 'Guy',
@@ -270,7 +271,7 @@ experiment("RBAC policy, based on group membership", function() {
 
     var users = {};
 
-    users['sg1002'] = {
+    users.sg1002 = {
       'scope': 'admin',
       'firstName': 'Some',
       'lastName': 'Otherguy',
@@ -279,7 +280,7 @@ experiment("RBAC policy, based on group membership", function() {
       'group': ['admin', 'publisher']
     };
 
-    users['sg1003'] = {
+    users.sg1003 = {
       'scope': 'admin',
       'firstName': 'Another',
       'lastName': 'Guy',
@@ -573,7 +574,7 @@ experiment("RBAC rule, based on username", function() {
 
     var users = {};
 
-    users['sg1004'] = {
+    users.sg1004 = {
       'scope': 'admin',
       'firstName': 'Some',
       'lastName': 'Guy',
@@ -707,7 +708,7 @@ experiment("RBAC rule, based on group membership", function() {
 
     var users = {};
 
-    users['sg1005'] = {
+    users.sg1005 = {
       'scope': 'admin',
       'firstName': 'Some',
       'lastName': 'Otherguy',
@@ -716,7 +717,7 @@ experiment("RBAC rule, based on group membership", function() {
       'group': ['admin', 'publisher']
     };
 
-    users['sg1006'] = {
+    users.sg1006 = {
       'scope': 'admin',
       'firstName': 'Another',
       'lastName': 'Guy',
