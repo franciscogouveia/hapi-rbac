@@ -991,3 +991,128 @@ experiment("RBAC rule, based on group membership", function() {
       });
   });
 });
+
+
+/**
+ * Rule based access control complex policy rules test
+ **/
+experiment("RBAC complex rules", function() {
+
+  var server;
+
+  before(function(done) {
+    // Set up the hapi server route
+    server = new Hapi.Server();
+
+    server.connection();
+
+    var users = {};
+
+    users.sg1007 = {
+      'scope': 'admin',
+      'firstName': 'Some',
+      'lastName': 'Otherguy',
+      'username': 'sg1007',
+      'password': 'pwtest',
+      'group': ['admin', 'publisher']
+    };
+
+    users.sg1008 = {
+      'scope': 'admin',
+      'firstName': 'Another',
+      'lastName': 'Guy',
+      'username': 'sg1008',
+      'password': 'pwtest',
+      'group': ['admin', 'reader']
+    };
+
+    server.register([
+      {
+        register: require('hapi-auth-basic')
+      },
+      {
+        register: require('../')
+      }
+    ], function(err) {
+
+      if(err) {
+        return done(err);
+      }
+
+      server.auth.strategy('default', 'basic', 'required', {
+        validateFunc: function(request, username, password, callback) {
+
+          if(!users[username] || users[username].password !== password) {
+            return callback(Boom.unauthorized('Wrong credentials') , false);
+          }
+
+          callback(null, true, users[username]);
+        }
+      });
+
+      server.route({
+        method: 'GET',
+        path: '/example',
+        handler: function(request, reply) {
+          reply({
+            ok: true
+          });
+        },
+        config: {
+          plugins: {
+            rbac: {
+              target: ['any-of', {type: 'group', value: 'admin'}],
+              apply: 'deny-overrides',
+              rules: [
+                {
+                  target: ['any-of', {type: 'username', value: 'sg1007'}],
+                  effect: 'deny'
+                },
+                {
+                  effect: 'permit'
+                }
+              ]
+            }
+          }
+        }
+      });
+
+      done();
+
+    });
+
+  });
+
+  test("Should have access, through the admin group membership", function(done) {
+
+      server.inject({
+        method: 'GET',
+        url: '/example',
+        headers: {
+          authorization: 'Basic ' + (new Buffer('sg1008:pwtest', 'utf8')).toString('base64')
+        }
+      }, function(response) {
+
+        expect(response.statusCode).to.equal(200);
+
+        done();
+      });
+  });
+
+  test("Should not have access, through the policy exception rule", function(done) {
+
+      server.inject({
+        method: 'GET',
+        url: '/example',
+        headers: {
+          authorization: 'Basic ' + (new Buffer('sg1007:pwtest', 'utf8')).toString('base64')
+        }
+      }, function(response) {
+
+        expect(response.statusCode).to.equal(401);
+
+        done();
+      });
+  });
+
+});
