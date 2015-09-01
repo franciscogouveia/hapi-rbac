@@ -1,6 +1,6 @@
 {
   "name": "hapi-rbac",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Role Based Access Control for Hapijs",
   "preferGlobal": false,
   "main": "lib/index.js",
