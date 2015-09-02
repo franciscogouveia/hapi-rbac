@@ -61,14 +61,116 @@ The `type` defined in the target should be a key in your `credentials` document.
 
 ### Target matching
 
-Targets are the conditions which will define if a policy set, policy or rule apply in a request. Target should be an array, where the first element is a string. This first element should specify how the multiple targets should be matched. There are two possibilities:
+Targets are the conditions which will define if a policy set, policy or rule apply in a request. If the policy set, policy or rule should always apply, you can simply omit the `target`.
+
+When present, it should be an array, where the first element is a string. This first element should specify how the multiple targets should be matched. There are two possibilities:
 
 * `any-of` - You can think of it as an OR operator
 * `all-of` - You can think of it as an AND operator
 
 The other elements of the array are the matching subjects.
 
-If the policy set, policy or rule should always apply, you can simply omit the `target`.
+Check the following examples:
+
+#### all-of
+
+```
+['all-of', {type: 'group', value: 'writer'}, {type: 'premium', value: true}]
+```
+
+With this rule, only users in group `writer` **and** with `premium` account can access.
+
+So, if the logged in user has the following `request.auth.credentials` document:
+
+```
+{
+  username: 'user00001',
+  group: ['writer'], // match
+  premium: true, // match
+  ...
+}
+```
+
+Then, this user meets all the target requirements and can access the route.
+
+But, if the logged in user has one of the following `request.auth.credentials` documents:
+
+```
+{
+  username: 'user00002',
+  group: ['writer'], // match
+  premium: false, // do not match :-(
+  ...
+}
+```
+
+```
+{
+  username: 'user00003',
+  group: ['reader'], // do not match :-(
+  premium: true, // match
+  ...
+}
+```
+
+Then, this user meets only one of the requirements. Since the match used is `all-of`, the user cannot access the route.
+
+#### any-of
+
+```
+['any-of', {type: 'group', value: 'writer'}, {type: 'premium', value: true}, {type: 'username', value: 'user00002'}]
+```
+
+With this rule, any user in the group `writer` **or** with `premium` account **or** with username `user00002` can access the route.
+
+So, users with the following `request.auth.credentials` documents can access the route:
+
+```
+{
+  username: 'user00001',
+  group: ['writer'], // match
+  premium: false,
+  ...
+}
+```
+
+```
+{
+  username: 'user00002', // match
+  group: ['reader'],
+  premium: false,
+  ...
+}
+```
+
+```
+{
+  username: 'user00003',
+  group: ['reader'],
+  premium: true, // match
+  ...
+}
+```
+
+```
+{
+  username: 'user00004',
+  group: ['writer'], // match
+  premium: true, // match
+  ...
+}
+```
+
+But, not the one with the following document:
+
+```
+{
+  username: 'user00005',
+  group: ['reader'],
+  premium: false,
+  ...
+}
+```
 
 ### Policy and Rules combinatory algorithms
 
