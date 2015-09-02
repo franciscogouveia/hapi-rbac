@@ -61,14 +61,116 @@ The `type` defined in the target should be a key in your `credentials` document.
 
 ### Target matching
 
-Targets are the conditions which will define if a policy set, policy or rule apply in a request. Target should be an array, where the first element is a string. This first element should specify how the multiple targets should be matched. There are two possibilities:
+Targets are the conditions which will define if a policy set, policy or rule apply in a request. If the policy set, policy or rule should always apply, you can simply omit the `target`.
+
+When present, it should be an array, where the first element is a string. This first element should specify how the multiple targets should be matched. There are two possibilities:
 
 * `any-of` - You can think of it as an OR operator
 * `all-of` - You can think of it as an AND operator
 
 The other elements of the array are the matching subjects.
 
-If the policy set, policy or rule should always apply, you can simply omit the `target`.
+Check the following examples:
+
+#### all-of
+
+```
+['all-of', {type: 'group', value: 'writer'}, {type: 'premium', value: true}]
+```
+
+With this target, only users in group `writer` **and** with `premium` account will match.
+
+So, if the logged in user has the following `request.auth.credentials` document:
+
+```
+{
+  username: 'user00001',
+  group: ['writer'], // match
+  premium: true, // match
+  ...
+}
+```
+
+Then, the rule or policy with the configured target will be evaluated.
+
+But, if the logged in user has one of the following `request.auth.credentials` documents:
+
+```
+{
+  username: 'user00002',
+  group: ['writer'], // match
+  premium: false, // do not match :-(
+  ...
+}
+```
+
+```
+{
+  username: 'user00003',
+  group: ['reader'], // do not match :-(
+  premium: true, // match
+  ...
+}
+```
+
+Then, the rule or policy with the configured target will not be evaluated. Since the match used is `all-of`, the user doesn't match the target.
+
+#### any-of
+
+```
+['any-of', {type: 'group', value: 'writer'}, {type: 'premium', value: true}, {type: 'username', value: 'user00002'}]
+```
+
+With this target, any user in the group `writer` **or** with `premium` account **or** with username `user00002` will be matched.
+
+So, users with the following `request.auth.credentials` documents will be matched:
+
+```
+{
+  username: 'user00001',
+  group: ['writer'], // match
+  premium: false,
+  ...
+}
+```
+
+```
+{
+  username: 'user00002', // match
+  group: ['reader'],
+  premium: false,
+  ...
+}
+```
+
+```
+{
+  username: 'user00003',
+  group: ['reader'],
+  premium: true, // match
+  ...
+}
+```
+
+```
+{
+  username: 'user00004',
+  group: ['writer'], // match
+  premium: true, // match
+  ...
+}
+```
+
+But, not the one with the following document:
+
+```
+{
+  username: 'user00005',
+  group: ['reader'],
+  premium: false,
+  ...
+}
+```
 
 ### Policy and Rules combinatory algorithms
 
@@ -79,12 +181,110 @@ When there is more than one policy inside a policy set or more than one rule ins
 
 ### Rule effects
 
-If a rule applies, the `effect` is the access decision for that rule. It can be:
+If a rule applies (target match), the `effect` is the access decision for that rule. It can be:
 
 * `permit` - If rule apply, decision is to allow access
 * `deny` - If rule apply, decision is to deny access
 
 When a policy set, policy or rule do not apply (the target don't match), then the decision is `undetermined`. If all the policy sets, policies and rules have the `undetermined` result, then the access is denied, since it is not clear if the user can access or not the route.
+
+
+### Rule
+
+A Rule defines a decision to allow or deny access. It contains:
+
+* `target` (optional) - The target (default: matches with any)
+* `effect` - The decision if the target matches. Can be `permit` or `deny`
+
+Example
+
+```
+{
+  target: ['any-of', {type: 'blocked', value: true}], // if the user is blocked
+  effect: 'deny'  // then deny
+}
+```
+
+
+### Policy
+
+A Policy is a set of rules. It contains:
+
+* `target` (optional) - The target (default: matches with any)
+* `apply` - The combinatory algorithm for the rules
+* `rules` - An array of rules
+
+Example
+
+```
+{
+  target: ['all-of', {type: 'group', value: 'writer'}, {type: 'premium', value: true}], // if writer AND premium account
+  apply: 'deny-overrides', // permit, unless one denies
+  rules: [
+    {
+      target: ['any-of', {type: 'username', value: 'bad_user'}], // if the username is bad_user
+      effect: 'deny'  // then deny
+    },
+    {
+      target: ['any-of', {type: 'blocked', value: true}], // if the user is blocked
+      effect: 'deny'  // then deny
+    },
+    {
+      effect: 'permit' // else permit
+    }
+  ]
+}
+```
+
+
+### Policy Set
+
+A Policy Set is a set of Policies. It contains:
+
+* `target` (optional) - The target (default: matches with any)
+* `apply` - The combinatory algorithm for the policies
+* `policies` - An array of policies
+
+Example
+
+```
+{
+  target: ['any-of', {type: 'group', value: 'writer'}, {type: 'group', value: 'publisher'}], // writer OR publisher
+  apply: 'permit-overrides', // deny, unless one permits
+  policies: [
+    {
+      target: ['all-of', {type: 'group', value: 'writer'}, {type: 'premium', value: true}], // if writer AND premium account
+      apply: 'deny-overrides', // permit, unless one denies
+      rules: [
+        {
+          target: ['any-of', {type: 'username', value: 'bad_user'}], // if the username is bad_user
+          effect: 'deny'  // then deny
+        },
+        {
+          target: ['any-of', {type: 'blocked', value: true}], // if the user is blocked
+          effect: 'deny'  // then deny
+        },
+        {
+          effect: 'permit' // else permit
+        }
+      ]
+    },
+    {
+      target: ['all-of', {type: 'premium', value: false}], // if (writer OR publisher) AND no premium account
+      apply: 'permit-overrides', // deny, unless one permits
+      rules: [
+        {
+          target: ['any-of', {type: 'username', value: 'special_user'}], // if the username is special_user
+          effect: 'permit'  // then permit
+        },
+        {
+          effect: 'deny' // else deny
+        }
+      ]
+    }
+  ]
+}
+```
 
 ## Learn more
 
