@@ -78,7 +78,7 @@ Check the following examples:
 ['all-of', {type: 'group', value: 'writer'}, {type: 'premium', value: true}]
 ```
 
-With this rule, only users in group `writer` **and** with `premium` account can access.
+With this target, only users in group `writer` **and** with `premium` account will match.
 
 So, if the logged in user has the following `request.auth.credentials` document:
 
@@ -91,7 +91,7 @@ So, if the logged in user has the following `request.auth.credentials` document:
 }
 ```
 
-Then, this user meets all the target requirements and can access the route.
+Then, the rule or policy with the configured target will be evaluated.
 
 But, if the logged in user has one of the following `request.auth.credentials` documents:
 
@@ -113,7 +113,7 @@ But, if the logged in user has one of the following `request.auth.credentials` d
 }
 ```
 
-Then, this user meets only one of the requirements. Since the match used is `all-of`, the user cannot access the route.
+Then, the rule or policy with the configured target will not be evaluated. Since the match used is `all-of`, the user doesn't match the target.
 
 #### any-of
 
@@ -121,9 +121,9 @@ Then, this user meets only one of the requirements. Since the match used is `all
 ['any-of', {type: 'group', value: 'writer'}, {type: 'premium', value: true}, {type: 'username', value: 'user00002'}]
 ```
 
-With this rule, any user in the group `writer` **or** with `premium` account **or** with username `user00002` can access the route.
+With this target, any user in the group `writer` **or** with `premium` account **or** with username `user00002` will be matched.
 
-So, users with the following `request.auth.credentials` documents can access the route:
+So, users with the following `request.auth.credentials` documents will be matched:
 
 ```
 {
