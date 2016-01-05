@@ -9,146 +9,149 @@ var test = lab.test;
 
 var expect = Code.expect;
 
-var rbac = require('../');
+var Rbac = require('../');
 
 
-experiment("Rule unit tests (permit)", function() {
+experiment('Rule unit tests (permit)', function () {
 
-  var rule = {
-    target: ['all-of', {type: 'group', value: 'administrator'}, {type: 'group', value: 'publisher'}],
-    effect: 'permit'
-  };
-
-  test("should permit publisher administrator", function(done) {
-
-    var information = {
-      username: 'user00001',
-      group: ['administrator', 'publisher']
+    var rule = {
+        target: ['all-of', { type: 'group', value: 'administrator' }, { type: 'group', value: 'publisher' }],
+        effect: 'permit'
     };
 
-    rbac.evaluatePolicy(rule, information, function(err, result) {
+    test('should permit publisher administrator', function (done) {
 
-      expect(err).to.not.exist();
+        var information = {
+            username: 'user00001',
+            group: ['administrator', 'publisher']
+        };
 
-      expect(result).to.exist().and.to.equal(rbac.PERMIT);
+        Rbac.evaluatePolicy(rule, information, function (err, result) {
 
-      done();
+            expect(err).to.not.exist();
+
+            expect(result).to.exist().and.to.equal(Rbac.PERMIT);
+
+            done();
+        });
     });
-  });
 
-  test("should be undetermined access to publisher", function(done) {
+    test('should be undetermined access to publisher', function (done) {
 
-    var information = {
-      username: 'user00002',
-      group: ['publisher']
-    };
+        var information = {
+            username: 'user00002',
+            group: ['publisher']
+        };
 
-    rbac.evaluatePolicy(rule, information, function(err, result) {
+        Rbac.evaluatePolicy(rule, information, function (err, result) {
 
-      expect(err).to.not.exist();
+            expect(err).to.not.exist();
 
-      expect(result).to.exist().and.to.equal(rbac.UNDETERMINED);
+            expect(result).to.exist().and.to.equal(Rbac.UNDETERMINED);
 
-      done();
+            done();
+        });
     });
-  });
 
-  test("should be undetermined access to administrator", function(done) {
+    test('should be undetermined access to administrator', function (done) {
 
-    var information = {
-      username: 'user00003',
-      group: ['administrator']
-    };
+        var information = {
+            username: 'user00003',
+            group: ['administrator']
+        };
 
-    rbac.evaluatePolicy(rule, information, function(err, result) {
+        Rbac.evaluatePolicy(rule, information, function (err, result) {
 
-      expect(err).to.not.exist();
+            expect(err).to.not.exist();
 
-      expect(result).to.exist().and.to.equal(rbac.UNDETERMINED);
+            expect(result).to.exist().and.to.equal(Rbac.UNDETERMINED);
 
-      done();
+            done();
+        });
     });
-  });
 
 });
 
-experiment("Rule unit tests (deny)", function() {
+experiment('Rule unit tests (deny)', function () {
 
-  var rule = {
-    target: ['any-of', {type: 'group', value: 'blacklist'}, {type: 'group', value: 'anonymous'}, {type: 'verified', value: false}],
-    effect: 'deny'
-  };
-
-  test("should deny user in blacklist group", function(done) {
-
-    var information = {
-      username: 'user00001',
-      group: ['blacklist', 'publisher'],
-      verified: true
+    var rule = {
+        target: ['any-of', { type: 'group', value: 'blacklist' }, { type: 'group', value: 'anonymous' }, {
+            type: 'verified',
+            value: false
+        }],
+        effect: 'deny'
     };
 
-    rbac.evaluatePolicy(rule, information, function(err, result) {
+    test('should deny user in blacklist group', function (done) {
 
-      expect(err).to.not.exist();
+        var information = {
+            username: 'user00001',
+            group: ['blacklist', 'publisher'],
+            verified: true
+        };
 
-      expect(result).to.exist().and.to.equal(rbac.DENY);
+        Rbac.evaluatePolicy(rule, information, function (err, result) {
 
-      done();
+            expect(err).to.not.exist();
+
+            expect(result).to.exist().and.to.equal(Rbac.DENY);
+
+            done();
+        });
     });
-  });
 
-  test("should deny user in anonymous group", function(done) {
+    test('should deny user in anonymous group', function (done) {
 
-    var information = {
-      username: 'user00001',
-      group: ['anonymous'],
-      verified: true
-    };
+        var information = {
+            username: 'user00001',
+            group: ['anonymous'],
+            verified: true
+        };
 
-    rbac.evaluatePolicy(rule, information, function(err, result) {
+        Rbac.evaluatePolicy(rule, information, function (err, result) {
 
-      expect(err).to.not.exist();
+            expect(err).to.not.exist();
 
-      expect(result).to.exist().and.to.equal(rbac.DENY);
+            expect(result).to.exist().and.to.equal(Rbac.DENY);
 
-      done();
+            done();
+        });
     });
-  });
 
-  test("should deny not verified user", function(done) {
+    test('should deny not verified user', function (done) {
 
-    var information = {
-      username: 'user00001',
-      group: ['administrator', 'publisher'],
-      verified: false
-    };
+        var information = {
+            username: 'user00001',
+            group: ['administrator', 'publisher'],
+            verified: false
+        };
 
-    rbac.evaluatePolicy(rule, information, function(err, result) {
+        Rbac.evaluatePolicy(rule, information, function (err, result) {
 
-      expect(err).to.not.exist();
+            expect(err).to.not.exist();
 
-      expect(result).to.exist().and.to.equal(rbac.DENY);
+            expect(result).to.exist().and.to.equal(Rbac.DENY);
 
-      done();
+            done();
+        });
     });
-  });
 
-  test("should be undetermined", function(done) {
+    test('should be undetermined', function (done) {
 
-    var information = {
-      username: 'user00001',
-      group: ['administrator', 'publisher'],
-      verified: true
-    };
+        var information = {
+            username: 'user00001',
+            group: ['administrator', 'publisher'],
+            verified: true
+        };
 
-    rbac.evaluatePolicy(rule, information, function(err, result) {
+        Rbac.evaluatePolicy(rule, information, function (err, result) {
 
-      expect(err).to.not.exist();
+            expect(err).to.not.exist();
 
-      expect(result).to.exist().and.to.equal(rbac.UNDETERMINED);
+            expect(result).to.exist().and.to.equal(Rbac.UNDETERMINED);
 
-      done();
+            done();
+        });
     });
-  });
 
 });
