@@ -7,7 +7,9 @@
   "repository": "git@github.com:franciscogouveia/hapi-rbac.git",
   "scripts": {
     "test": "lab -v",
-    "coverage": "lab -s -r lcov | coveralls"
+    "coverage": "lab -s -r lcov | coveralls",
+    "lint": "lab -dL",
+    "indent": "js-beautify lib/index.js"
   },
   "keywords": [
     "hapijs",
@@ -27,11 +29,9 @@
   "devDependencies": {
     "code": "^1.5.0",
     "coveralls": "^2.11.6",
-    "grunt": "^0.4.5",
-    "grunt-contrib-jshint": "^0.11.2",
-    "grunt-jsbeautifier": "^0.2.10",
     "hapi": "^9.0.3",
     "hapi-auth-basic": "^3.0.0",
+    "js-beautify": "^1.5.10",
     "lab": "^6.2.0"
   },
   "dependencies": {
