@@ -1,6 +1,12 @@
-# hapi-rbac [![Build Status](https://travis-ci.org/franciscogouveia/hapi-rbac.svg?branch=master)](https://travis-ci.org/franciscogouveia/hapi-rbac)
+# hapi-rbac
 
-A Rule Based Access Control module for hapi. This is inspired by the XACML policies.
+[![npm version][npm-badge]][npm-url]
+[![Build Status][travis-badge]][travis-url]
+[![Coverage Status][coveralls-badge]][coveralls-url]
+[![Dependency Status][david-badge]][david-url]
+
+> A Rule Based Access Control module for hapi.
+> This is inspired by the [XACML](https://fr.wikipedia.org/wiki/XACML) policies.
 
 ## How to use it
 
@@ -289,3 +295,12 @@ Example
 ## Learn more
 
 To have a better idea of how this works, you can check my Bachelor's project presentation about XACML [here](http://helios.av.it.pt/attachments/download/559/_en_XACML.PAPOX.Presentation.pdf) (english), or [here](http://helios.av.it.pt/attachments/download/557/_pt_XACML.PAPOX.Presentation.pdf) (portuguese). Even though this plugin doesn't implement the XACML specification, it was based on its policies.
+
+[npm-badge]: https://img.shields.io/npm/v/hapi-rbac.svg
+[npm-url]: https://npmjs.com/package/hapi-rbac
+[travis-badge]: https://travis-ci.org/franciscogouveia/hapi-rbac.png?branch=master
+[travis-url]: https://travis-ci.org/franciscogouveia/hapi-rbac
+[coveralls-badge]:https://coveralls.io/repos/franciscogouveia/hapi-rbac/badge.svg?branch=master&service=github
+[coveralls-url]: https://coveralls.io/github/franciscogouveia/hapi-rbac?branch=master
+[david-badge]: https://david-dm.org/franciscogouveia/hapi-rbac.svg
+[david-url]: https://david-dm.org/franciscogouveia/hapi-rbac
