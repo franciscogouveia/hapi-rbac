@@ -1,15 +1,15 @@
 'use strict';
 
-var Code = require('code');
-var Lab = require('lab');
+const Code = require('code');
+const Lab = require('lab');
 
-var lab = exports.lab = Lab.script();
-var experiment = lab.experiment;
-var test = lab.test;
+const lab = exports.lab = Lab.script();
+const experiment = lab.experiment;
+const test = lab.test;
 
-var expect = Code.expect;
+const expect = Code.expect;
 
-var Rbac = require('../');
+const Rbac = require('../');
 
 
 experiment('Policy set unit tests', () => {

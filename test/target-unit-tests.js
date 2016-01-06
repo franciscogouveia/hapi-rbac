@@ -1,15 +1,15 @@
 'use strict';
 
-var Code = require('code');
-var Lab = require('lab');
+const Code = require('code');
+const Lab = require('lab');
 
-var lab = exports.lab = Lab.script();
-var experiment = lab.experiment;
-var test = lab.test;
+const lab = exports.lab = Lab.script();
+const experiment = lab.experiment;
+const test = lab.test;
 
-var expect = Code.expect;
+const expect = Code.expect;
 
-var Rbac = require('../');
+const Rbac = require('../');
 
 
 experiment('Target unit tests (all-of)', () => {
@@ -36,7 +36,7 @@ experiment('Target unit tests (all-of)', () => {
 
     test('should not apply (partial match)', (done) => {
 
-        var information = {
+        const information = {
             username: 'user00002',
             group: ['writer'],
             premium: false
@@ -54,7 +54,7 @@ experiment('Target unit tests (all-of)', () => {
 
     test('should not apply (no match)', (done) => {
 
-        var information = {
+        const information = {
             username: 'user00003',
             group: ['reader'],
             premium: false
@@ -74,14 +74,14 @@ experiment('Target unit tests (all-of)', () => {
 
 experiment('Target unit tests (any-of)', () => {
 
-    var target = ['any-of', { type: 'group', value: 'writer' }, { type: 'premium', value: true }, {
+    const target = ['any-of', { type: 'group', value: 'writer' }, { type: 'premium', value: true }, {
         type: 'username',
         value: 'user00002'
     }];
 
     test('should apply (partial match)', (done) => {
 
-        var information = {
+        const information = {
             username: 'user00001', // do not match
             group: ['writer'],
             premium: true
@@ -99,7 +99,7 @@ experiment('Target unit tests (any-of)', () => {
 
     test('should apply (full match)', (done) => {
 
-        var information = {
+        const information = {
             username: 'user00002',
             group: ['writer'],
             premium: true
@@ -117,7 +117,7 @@ experiment('Target unit tests (any-of)', () => {
 
     test('should not apply (no match)', (done) => {
 
-        var information = {
+        const information = {
             username: 'user00003',
             group: ['reader'],
             premium: false
