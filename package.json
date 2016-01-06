@@ -1,41 +1,41 @@
 {
-  "name": "hapi-rbac",
-  "version": "0.2.0",
-  "description": "Role Based Access Control for Hapijs",
-  "preferGlobal": false,
-  "main": "lib/index.js",
-  "repository": "git@github.com:franciscogouveia/hapi-rbac.git",
-  "scripts": {
-    "test": "lab -v",
-    "coverage": "lab -s -r lcov | coveralls",
-    "lint": "lab -dL",
-    "indent": "js-beautify lib/index.js"
-  },
-  "keywords": [
-    "hapijs",
-    "hapi",
-    "api",
-    "rbac",
-    "ac",
-    "access-control",
-    "rule"
-  ],
-  "author": {
-    "name": "Francisco de Gouveia",
-    "email": "francisco@de-gouveia.eu",
-    "url": "http://de-gouveia.eu"
-  },
-  "license": "ISC",
-  "devDependencies": {
-    "code": "^1.5.0",
-    "coveralls": "^2.11.6",
-    "hapi": "^9.0.3",
-    "hapi-auth-basic": "^3.0.0",
-    "js-beautify": "^1.5.10",
-    "lab": "^6.2.0"
-  },
-  "dependencies": {
-    "async": "^1.4.2",
-    "boom": "^2.8.0"
-  }
+    "name": "hapi-rbac",
+    "version": "0.2.0",
+    "description": "Role Based Access Control for Hapijs",
+    "preferGlobal": false,
+    "main": "lib/index.js",
+    "repository": "git@github.com:franciscogouveia/hapi-rbac.git",
+    "keywords": [
+        "hapijs",
+        "hapi",
+        "api",
+        "rbac",
+        "ac",
+        "access-control",
+        "rule"
+    ],
+    "author": {
+        "name": "Francisco de Gouveia",
+        "email": "francisco@de-gouveia.eu",
+        "url": "http://de-gouveia.eu"
+    },
+    "license": "ISC",
+    "scripts": {
+        "test": "lab -v",
+        "coverage": "lab -s -r lcov | coveralls",
+        "lint": "lab -dL",
+        "indent": "js-beautify lib/index.js"
+    },
+    "dependencies": {
+        "async": "^1.4.2",
+        "boom": "^2.8.0"
+    },
+    "devDependencies": {
+        "code": "^1.5.0",
+        "coveralls": "^2.11.6",
+        "hapi": "^9.0.3",
+        "hapi-auth-basic": "^3.0.0",
+        "js-beautify": "^1.5.10",
+        "lab": "^6.2.0"
+    }
 }
