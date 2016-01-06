@@ -13,11 +13,11 @@ var before = lab.before;
 var expect = Code.expect;
 
 
-experiment('Generic tests, with RBAC plugin configured', function () {
+experiment('Generic tests, with RBAC plugin configured', () => {
 
     var server;
 
-    before(function (done) {
+    before((done) => {
         // Set up the hapi server route
         server = new Hapi.Server();
 
@@ -41,14 +41,14 @@ experiment('Generic tests, with RBAC plugin configured', function () {
             {
                 register: require('../')
             }
-        ], function (err) {
+        ], (err) => {
 
             if (err) {
                 return done(err);
             }
 
             server.auth.strategy('default', 'basic', 'required', {
-                validateFunc: function (request, username, password, callback) {
+                validateFunc: (request, username, password, callback) => {
 
                     if (!users[username] || users[username].password !== password) {
                         return callback(Boom.unauthorized('Wrong credentials'), false);
@@ -64,12 +64,12 @@ experiment('Generic tests, with RBAC plugin configured', function () {
 
     });
 
-    test('Should not have access with wrong credentials', function (done) {
+    test('Should not have access with wrong credentials', (done) => {
 
         server.route({
             method: 'GET',
             path: '/wrong-credentials',
-            handler: function (request, reply) {
+            handler: (request, reply) => {
 
                 reply({
                     ok: true
@@ -83,7 +83,7 @@ experiment('Generic tests, with RBAC plugin configured', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('xpto:pw-123456', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(401);
 
@@ -94,12 +94,12 @@ experiment('Generic tests, with RBAC plugin configured', function () {
         });
     });
 
-    test('Should have access on route without ac rules', function (done) {
+    test('Should have access on route without ac rules', (done) => {
 
         server.route({
             method: 'GET',
             path: '/user',
-            handler: function (request, reply) {
+            handler: (request, reply) => {
 
                 reply({
                     ok: true
@@ -113,7 +113,7 @@ experiment('Generic tests, with RBAC plugin configured', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1000:pwtest', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(200);
 
@@ -127,11 +127,11 @@ experiment('Generic tests, with RBAC plugin configured', function () {
 /**
  * Rule based access control policy tests, based on username
  **/
-experiment('RBAC policy, based on username', function () {
+experiment('RBAC policy, based on username', () => {
 
     var server;
 
-    before(function (done) {
+    before((done) => {
         // Set up the hapi server route
         server = new Hapi.Server();
 
@@ -155,14 +155,14 @@ experiment('RBAC policy, based on username', function () {
             {
                 register: require('../')
             }
-        ], function (err) {
+        ], (err) => {
 
             if (err) {
                 return done(err);
             }
 
             server.auth.strategy('default', 'basic', 'required', {
-                validateFunc: function (request, username, password, callback) {
+                validateFunc: (request, username, password, callback) => {
 
                     if (!users[username] || users[username].password !== password) {
                         return callback(Boom.unauthorized('Wrong credentials'), false);
@@ -178,12 +178,12 @@ experiment('RBAC policy, based on username', function () {
 
     });
 
-    test('Should have access to the route, with policy targeting the username', function (done) {
+    test('Should have access to the route, with policy targeting the username', (done) => {
 
         server.route({
             method: 'GET',
             path: '/allow-username',
-            handler: function (request, reply) {
+            handler: (request, reply) => {
 
                 reply({
                     ok: true
@@ -210,7 +210,7 @@ experiment('RBAC policy, based on username', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1001:pwtest', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(200);
 
@@ -218,12 +218,12 @@ experiment('RBAC policy, based on username', function () {
         });
     });
 
-    test('Should not have access to the route, with policy targeting the username', function (done) {
+    test('Should not have access to the route, with policy targeting the username', (done) => {
 
         server.route({
             method: 'GET',
             path: '/disallow-username',
-            handler: function (request, reply) {
+            handler: (request, reply) => {
 
                 reply({
                     ok: true
@@ -250,7 +250,7 @@ experiment('RBAC policy, based on username', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1001:pwtest', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(401);
 
@@ -263,11 +263,11 @@ experiment('RBAC policy, based on username', function () {
 /**
  * Rule based access control policy tests, based on group membership
  **/
-experiment('RBAC policy, based on group membership', function () {
+experiment('RBAC policy, based on group membership', () => {
 
     var server;
 
-    before(function (done) {
+    before((done) => {
         // Set up the hapi server route
         server = new Hapi.Server();
 
@@ -300,14 +300,14 @@ experiment('RBAC policy, based on group membership', function () {
             {
                 register: require('../')
             }
-        ], function (err) {
+        ], (err) => {
 
             if (err) {
                 return done(err);
             }
 
             server.auth.strategy('default', 'basic', 'required', {
-                validateFunc: function (request, username, password, callback) {
+                validateFunc: (request, username, password, callback) => {
 
                     if (!users[username] || users[username].password !== password) {
                         return callback(Boom.unauthorized('Wrong credentials'), false);
@@ -323,12 +323,12 @@ experiment('RBAC policy, based on group membership', function () {
 
     });
 
-    test('Should have access to the route, with policy targeting a group inside user membership', function (done) {
+    test('Should have access to the route, with policy targeting a group inside user membership', (done) => {
 
         server.route({
             method: 'GET',
             path: '/permit-with-group-membership',
-            handler: function (request, reply) {
+            handler: (request, reply) => {
 
                 reply({
                     ok: true
@@ -355,7 +355,7 @@ experiment('RBAC policy, based on group membership', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(200);
 
@@ -363,12 +363,12 @@ experiment('RBAC policy, based on group membership', function () {
         });
     });
 
-    test('Should not have access to the route, with policy targeting a group outside user membership', function (done) {
+    test('Should not have access to the route, with policy targeting a group outside user membership', (done) => {
 
         server.route({
             method: 'GET',
             path: '/deny-without-group-membership',
-            handler: function (request, reply) {
+            handler: (request, reply) => {
 
                 reply({
                     ok: true
@@ -395,7 +395,7 @@ experiment('RBAC policy, based on group membership', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(401);
 
@@ -403,12 +403,12 @@ experiment('RBAC policy, based on group membership', function () {
         });
     });
 
-    test('Should have access to the route, with policy targeting one group inside OR one group outside user membership', function (done) {
+    test('Should have access to the route, with policy targeting one group inside OR one group outside user membership', (done) => {
 
         server.route({
             method: 'GET',
             path: '/permit-if-at-least-one-group-membership',
-            handler: function (request, reply) {
+            handler: (request, reply) => {
 
                 reply({
                     ok: true
@@ -435,7 +435,7 @@ experiment('RBAC policy, based on group membership', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(200);
 
@@ -444,12 +444,12 @@ experiment('RBAC policy, based on group membership', function () {
     });
 
 
-    test('Should have access to the route, with policy targeting two groups outside user membership', function (done) {
+    test('Should have access to the route, with policy targeting two groups outside user membership', (done) => {
 
         server.route({
             method: 'GET',
             path: '/deny-if-none-group-membership',
-            handler: function (request, reply) {
+            handler: (request, reply) => {
 
                 reply({
                     ok: true
@@ -476,7 +476,7 @@ experiment('RBAC policy, based on group membership', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(401);
 
@@ -484,12 +484,12 @@ experiment('RBAC policy, based on group membership', function () {
         });
     });
 
-    test('Should not have access to the route, with policy targeting one group inside AND one group outside user membership', function (done) {
+    test('Should not have access to the route, with policy targeting one group inside AND one group outside user membership', (done) => {
 
         server.route({
             method: 'GET',
             path: '/deny-if-not-all-group-membership',
-            handler: function (request, reply) {
+            handler: (request, reply) => {
 
                 reply({
                     ok: true
@@ -516,7 +516,7 @@ experiment('RBAC policy, based on group membership', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(401);
 
@@ -524,12 +524,12 @@ experiment('RBAC policy, based on group membership', function () {
         });
     });
 
-    test('Should have access to the route, with policy targeting two groups inside user membership', function (done) {
+    test('Should have access to the route, with policy targeting two groups inside user membership', (done) => {
 
         server.route({
             method: 'GET',
             path: '/permit-if-all-group-membership',
-            handler: function (request, reply) {
+            handler: (request, reply) => {
 
                 reply({
                     ok: true
@@ -556,7 +556,7 @@ experiment('RBAC policy, based on group membership', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(200);
 
@@ -569,11 +569,11 @@ experiment('RBAC policy, based on group membership', function () {
 /**
  * Rule based access control policy tests, based on username
  **/
-experiment('RBAC rule, based on username', function () {
+experiment('RBAC rule, based on username', () => {
 
     var server;
 
-    before(function (done) {
+    before((done) => {
 
         // Set up the hapi server route
         server = new Hapi.Server();
@@ -598,14 +598,14 @@ experiment('RBAC rule, based on username', function () {
             {
                 register: require('../')
             }
-        ], function (err) {
+        ], (err) => {
 
             if (err) {
                 return done(err);
             }
 
             server.auth.strategy('default', 'basic', 'required', {
-                validateFunc: function (request, username, password, callback) {
+                validateFunc: (request, username, password, callback) => {
 
                     if (!users[username] || users[username].password !== password) {
                         return callback(Boom.unauthorized('Wrong credentials'), false);
@@ -621,12 +621,12 @@ experiment('RBAC rule, based on username', function () {
 
     });
 
-    test('Should have access to the route, with policy targeting the username', function (done) {
+    test('Should have access to the route, with policy targeting the username', (done) => {
 
         server.route({
             method: 'GET',
             path: '/allow-username',
-            handler: function (request, reply) {
+            handler: (request, reply) => {
 
                 reply({
                     ok: true
@@ -653,7 +653,7 @@ experiment('RBAC rule, based on username', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1004:pwtest', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(200);
 
@@ -661,12 +661,12 @@ experiment('RBAC rule, based on username', function () {
         });
     });
 
-    test('Should not have access to the route, with policy targeting the username', function (done) {
+    test('Should not have access to the route, with policy targeting the username', (done) => {
 
         server.route({
             method: 'GET',
             path: '/disallow-username',
-            handler: function (request, reply) {
+            handler: (request, reply) => {
 
                 reply({
                     ok: true
@@ -693,7 +693,7 @@ experiment('RBAC rule, based on username', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1004:pwtest', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(401);
 
@@ -706,11 +706,11 @@ experiment('RBAC rule, based on username', function () {
 /**
  * Rule based access control rule tests, based on group membership
  **/
-experiment('RBAC rule, based on group membership', function () {
+experiment('RBAC rule, based on group membership', () => {
 
     var server;
 
-    before(function (done) {
+    before((done) => {
 
         // Set up the hapi server route
         server = new Hapi.Server();
@@ -744,14 +744,14 @@ experiment('RBAC rule, based on group membership', function () {
             {
                 register: require('../')
             }
-        ], function (err) {
+        ], (err) => {
 
             if (err) {
                 return done(err);
             }
 
             server.auth.strategy('default', 'basic', 'required', {
-                validateFunc: function (request, username, password, callback) {
+                validateFunc: (request, username, password, callback) => {
 
                     if (!users[username] || users[username].password !== password) {
                         return callback(Boom.unauthorized('Wrong credentials'), false);
@@ -767,12 +767,12 @@ experiment('RBAC rule, based on group membership', function () {
 
     });
 
-    test('Should have access to the route, with policy targeting a group inside user membership', function (done) {
+    test('Should have access to the route, with policy targeting a group inside user membership', (done) => {
 
         server.route({
             method: 'GET',
             path: '/permit-with-group-membership',
-            handler: function (request, reply) {
+            handler: (request, reply) => {
 
                 reply({
                     ok: true
@@ -799,7 +799,7 @@ experiment('RBAC rule, based on group membership', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1005:pwtest', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(200);
 
@@ -807,12 +807,12 @@ experiment('RBAC rule, based on group membership', function () {
         });
     });
 
-    test('Should not have access to the route, with policy targeting a group outside user membership', function (done) {
+    test('Should not have access to the route, with policy targeting a group outside user membership', (done) => {
 
         server.route({
             method: 'GET',
             path: '/deny-without-group-membership',
-            handler: function (request, reply) {
+            handler: (request, reply) => {
 
                 reply({
                     ok: true
@@ -839,7 +839,7 @@ experiment('RBAC rule, based on group membership', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1005:pwtest', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(401);
 
@@ -847,12 +847,12 @@ experiment('RBAC rule, based on group membership', function () {
         });
     });
 
-    test('Should have access to the route, with policy targeting one group inside OR one group outside user membership', function (done) {
+    test('Should have access to the route, with policy targeting one group inside OR one group outside user membership', (done) => {
 
         server.route({
             method: 'GET',
             path: '/permit-if-at-least-one-group-membership',
-            handler: function (request, reply) {
+            handler: (request, reply) => {
 
                 reply({
                     ok: true
@@ -879,7 +879,7 @@ experiment('RBAC rule, based on group membership', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1005:pwtest', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(200);
 
@@ -888,12 +888,12 @@ experiment('RBAC rule, based on group membership', function () {
     });
 
 
-    test('Should have access to the route, with policy targeting two groups outside user membership', function (done) {
+    test('Should have access to the route, with policy targeting two groups outside user membership', (done) => {
 
         server.route({
             method: 'GET',
             path: '/deny-if-none-group-membership',
-            handler: function (request, reply) {
+            handler: (request, reply) => {
 
                 reply({
                     ok: true
@@ -920,7 +920,7 @@ experiment('RBAC rule, based on group membership', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1005:pwtest', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(401);
 
@@ -928,12 +928,12 @@ experiment('RBAC rule, based on group membership', function () {
         });
     });
 
-    test('Should not have access to the route, with policy targeting one group inside AND one group outside user membership', function (done) {
+    test('Should not have access to the route, with policy targeting one group inside AND one group outside user membership', (done) => {
 
         server.route({
             method: 'GET',
             path: '/deny-if-not-all-group-membership',
-            handler: function (request, reply) {
+            handler: (request, reply) => {
 
                 reply({
                     ok: true
@@ -960,7 +960,7 @@ experiment('RBAC rule, based on group membership', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1005:pwtest', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(401);
 
@@ -968,12 +968,12 @@ experiment('RBAC rule, based on group membership', function () {
         });
     });
 
-    test('Should have access to the route, with policy targeting two groups inside user membership', function (done) {
+    test('Should have access to the route, with policy targeting two groups inside user membership', (done) => {
 
         server.route({
             method: 'GET',
             path: '/permit-if-all-group-membership',
-            handler: function (request, reply) {
+            handler: (request, reply) => {
 
                 reply({
                     ok: true
@@ -1003,7 +1003,7 @@ experiment('RBAC rule, based on group membership', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1005:pwtest', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(200);
 
@@ -1016,11 +1016,11 @@ experiment('RBAC rule, based on group membership', function () {
 /**
  * Rule based access control complex policy rules test
  **/
-experiment('RBAC complex rules', function () {
+experiment('RBAC complex rules', () => {
 
     var server;
 
-    before(function (done) {
+    before((done) => {
         // Set up the hapi server route
         server = new Hapi.Server();
 
@@ -1053,14 +1053,14 @@ experiment('RBAC complex rules', function () {
             {
                 register: require('../')
             }
-        ], function (err) {
+        ], (err) => {
 
             if (err) {
                 return done(err);
             }
 
             server.auth.strategy('default', 'basic', 'required', {
-                validateFunc: function (request, username, password, callback) {
+                validateFunc: (request, username, password, callback) => {
 
                     if (!users[username] || users[username].password !== password) {
                         return callback(Boom.unauthorized('Wrong credentials'), false);
@@ -1073,7 +1073,7 @@ experiment('RBAC complex rules', function () {
             server.route({
                 method: 'GET',
                 path: '/example',
-                handler: function (request, reply) {
+                handler: (request, reply) => {
 
                     reply({
                         ok: true
@@ -1104,7 +1104,7 @@ experiment('RBAC complex rules', function () {
 
     });
 
-    test('Should have access, through the admin group membership', function (done) {
+    test('Should have access, through the admin group membership', (done) => {
 
         server.inject({
             method: 'GET',
@@ -1112,7 +1112,7 @@ experiment('RBAC complex rules', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1008:pwtest', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(200);
 
@@ -1120,7 +1120,7 @@ experiment('RBAC complex rules', function () {
         });
     });
 
-    test('Should not have access, through the policy exception rule', function (done) {
+    test('Should not have access, through the policy exception rule', (done) => {
 
         server.inject({
             method: 'GET',
@@ -1128,7 +1128,7 @@ experiment('RBAC complex rules', function () {
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1007:pwtest', 'utf8')).toString('base64')
             }
-        }, function (response) {
+        }, (response) => {
 
             expect(response.statusCode).to.equal(401);
 

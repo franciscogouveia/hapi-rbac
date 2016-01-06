@@ -12,21 +12,21 @@ var expect = Code.expect;
 var Rbac = require('../');
 
 
-experiment('Rule unit tests (permit)', function () {
+experiment('Rule unit tests (permit)', () => {
 
     var rule = {
         target: ['all-of', { type: 'group', value: 'administrator' }, { type: 'group', value: 'publisher' }],
         effect: 'permit'
     };
 
-    test('should permit publisher administrator', function (done) {
+    test('should permit publisher administrator', (done) => {
 
         var information = {
             username: 'user00001',
             group: ['administrator', 'publisher']
         };
 
-        Rbac.evaluatePolicy(rule, information, function (err, result) {
+        Rbac.evaluatePolicy(rule, information, (err, result) => {
 
             expect(err).to.not.exist();
 
@@ -36,14 +36,14 @@ experiment('Rule unit tests (permit)', function () {
         });
     });
 
-    test('should be undetermined access to publisher', function (done) {
+    test('should be undetermined access to publisher', (done) => {
 
         var information = {
             username: 'user00002',
             group: ['publisher']
         };
 
-        Rbac.evaluatePolicy(rule, information, function (err, result) {
+        Rbac.evaluatePolicy(rule, information, (err, result) => {
 
             expect(err).to.not.exist();
 
@@ -53,14 +53,14 @@ experiment('Rule unit tests (permit)', function () {
         });
     });
 
-    test('should be undetermined access to administrator', function (done) {
+    test('should be undetermined access to administrator', (done) => {
 
         var information = {
             username: 'user00003',
             group: ['administrator']
         };
 
-        Rbac.evaluatePolicy(rule, information, function (err, result) {
+        Rbac.evaluatePolicy(rule, information, (err, result) => {
 
             expect(err).to.not.exist();
 
@@ -72,7 +72,7 @@ experiment('Rule unit tests (permit)', function () {
 
 });
 
-experiment('Rule unit tests (deny)', function () {
+experiment('Rule unit tests (deny)', () => {
 
     var rule = {
         target: ['any-of', { type: 'group', value: 'blacklist' }, { type: 'group', value: 'anonymous' }, {
@@ -82,7 +82,7 @@ experiment('Rule unit tests (deny)', function () {
         effect: 'deny'
     };
 
-    test('should deny user in blacklist group', function (done) {
+    test('should deny user in blacklist group', (done) => {
 
         var information = {
             username: 'user00001',
@@ -90,7 +90,7 @@ experiment('Rule unit tests (deny)', function () {
             verified: true
         };
 
-        Rbac.evaluatePolicy(rule, information, function (err, result) {
+        Rbac.evaluatePolicy(rule, information, (err, result) => {
 
             expect(err).to.not.exist();
 
@@ -100,7 +100,7 @@ experiment('Rule unit tests (deny)', function () {
         });
     });
 
-    test('should deny user in anonymous group', function (done) {
+    test('should deny user in anonymous group', (done) => {
 
         var information = {
             username: 'user00001',
@@ -108,7 +108,7 @@ experiment('Rule unit tests (deny)', function () {
             verified: true
         };
 
-        Rbac.evaluatePolicy(rule, information, function (err, result) {
+        Rbac.evaluatePolicy(rule, information, (err, result) => {
 
             expect(err).to.not.exist();
 
@@ -118,7 +118,7 @@ experiment('Rule unit tests (deny)', function () {
         });
     });
 
-    test('should deny not verified user', function (done) {
+    test('should deny not verified user', (done) => {
 
         var information = {
             username: 'user00001',
@@ -126,7 +126,7 @@ experiment('Rule unit tests (deny)', function () {
             verified: false
         };
 
-        Rbac.evaluatePolicy(rule, information, function (err, result) {
+        Rbac.evaluatePolicy(rule, information, (err, result) => {
 
             expect(err).to.not.exist();
 
@@ -136,7 +136,7 @@ experiment('Rule unit tests (deny)', function () {
         });
     });
 
-    test('should be undetermined', function (done) {
+    test('should be undetermined', (done) => {
 
         var information = {
             username: 'user00001',
@@ -144,7 +144,7 @@ experiment('Rule unit tests (deny)', function () {
             verified: true
         };
 
-        Rbac.evaluatePolicy(rule, information, function (err, result) {
+        Rbac.evaluatePolicy(rule, information, (err, result) => {
 
             expect(err).to.not.exist();
 
