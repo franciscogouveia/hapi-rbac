@@ -69,7 +69,7 @@ experiment('Generic tests, with RBAC plugin configured', () => {
         server.route({
             method: 'GET',
             path: '/wrong-credentials',
-            handler: (request, reply) => reply({ok: true})
+            handler: (request, reply) => reply({ ok: true })
         });
 
         server.inject({
@@ -94,7 +94,7 @@ experiment('Generic tests, with RBAC plugin configured', () => {
         server.route({
             method: 'GET',
             path: '/user',
-            handler: (request, reply) => reply({ok: true})
+            handler: (request, reply) => reply({ ok: true })
         });
 
         server.inject({
@@ -173,7 +173,7 @@ experiment('RBAC policy, based on username', () => {
         server.route({
             method: 'GET',
             path: '/allow-username',
-            handler: (request, reply) => reply({ok: true}),
+            handler: (request, reply) => reply({ ok: true }),
             config: {
                 plugins: {
                     rbac: {
@@ -208,7 +208,7 @@ experiment('RBAC policy, based on username', () => {
         server.route({
             method: 'GET',
             path: '/disallow-username',
-            handler: (request, reply) => reply({ok: true}),
+            handler: (request, reply) => reply({ ok: true }),
             config: {
                 plugins: {
                     rbac: {
@@ -308,7 +308,7 @@ experiment('RBAC policy, based on group membership', () => {
         server.route({
             method: 'GET',
             path: '/permit-with-group-membership',
-            handler: (request, reply) => reply({ok: true}),
+            handler: (request, reply) => reply({ ok: true }),
             config: {
                 plugins: {
                     rbac: {
@@ -343,7 +343,7 @@ experiment('RBAC policy, based on group membership', () => {
         server.route({
             method: 'GET',
             path: '/deny-without-group-membership',
-            handler: (request, reply) => reply({ok: true}),
+            handler: (request, reply) => reply({ ok: true }),
             config: {
                 plugins: {
                     rbac: {
@@ -378,7 +378,7 @@ experiment('RBAC policy, based on group membership', () => {
         server.route({
             method: 'GET',
             path: '/permit-if-at-least-one-group-membership',
-            handler: (request, reply) => reply({ok: true}),
+            handler: (request, reply) => reply({ ok: true }),
             config: {
                 plugins: {
                     rbac: {
@@ -414,7 +414,7 @@ experiment('RBAC policy, based on group membership', () => {
         server.route({
             method: 'GET',
             path: '/deny-if-none-group-membership',
-            handler: (request, reply) => reply({ok: true}),
+            handler: (request, reply) => reply({ ok: true }),
             config: {
                 plugins: {
                     rbac: {
@@ -449,7 +449,7 @@ experiment('RBAC policy, based on group membership', () => {
         server.route({
             method: 'GET',
             path: '/deny-if-not-all-group-membership',
-            handler: (request, reply) => reply({ok: true}),
+            handler: (request, reply) => reply({ ok: true }),
             config: {
                 plugins: {
                     rbac: {
@@ -484,7 +484,7 @@ experiment('RBAC policy, based on group membership', () => {
         server.route({
             method: 'GET',
             path: '/permit-if-all-group-membership',
-            handler: (request, reply) => reply({ok: true}),
+            handler: (request, reply) => reply({ ok: true }),
             config: {
                 plugins: {
                     rbac: {
@@ -576,7 +576,7 @@ experiment('RBAC rule, based on username', () => {
         server.route({
             method: 'GET',
             path: '/allow-username',
-            handler: (request, reply) => reply({ok: true}),
+            handler: (request, reply) => reply({ ok: true }),
             config: {
                 plugins: {
                     rbac: {
@@ -611,7 +611,7 @@ experiment('RBAC rule, based on username', () => {
         server.route({
             method: 'GET',
             path: '/disallow-username',
-            handler: (request, reply) => reply({ok: true}),
+            handler: (request, reply) => reply({ ok: true }),
             config: {
                 plugins: {
                     rbac: {
@@ -712,7 +712,7 @@ experiment('RBAC rule, based on group membership', () => {
         server.route({
             method: 'GET',
             path: '/permit-with-group-membership',
-            handler: (request, reply) => reply({ok: true}),
+            handler: (request, reply) => reply({ ok: true }),
             config: {
                 plugins: {
                     rbac: {
@@ -747,7 +747,7 @@ experiment('RBAC rule, based on group membership', () => {
         server.route({
             method: 'GET',
             path: '/deny-without-group-membership',
-            handler: (request, reply) => reply({ok: true}),
+            handler: (request, reply) => reply({ ok: true }),
             config: {
                 plugins: {
                     rbac: {
@@ -782,7 +782,7 @@ experiment('RBAC rule, based on group membership', () => {
         server.route({
             method: 'GET',
             path: '/permit-if-at-least-one-group-membership',
-            handler: (request, reply) => reply({ok: true}),
+            handler: (request, reply) => reply({ ok: true }),
             config: {
                 plugins: {
                     rbac: {
@@ -818,7 +818,7 @@ experiment('RBAC rule, based on group membership', () => {
         server.route({
             method: 'GET',
             path: '/deny-if-none-group-membership',
-            handler: (request, reply) => reply({ok: true}),
+            handler: (request, reply) => reply({ ok: true }),
             config: {
                 plugins: {
                     rbac: {
@@ -853,7 +853,7 @@ experiment('RBAC rule, based on group membership', () => {
         server.route({
             method: 'GET',
             path: '/deny-if-not-all-group-membership',
-            handler: (request, reply) => reply({ok: true}),
+            handler: (request, reply) => reply({ ok: true }),
             config: {
                 plugins: {
                     rbac: {
@@ -888,7 +888,7 @@ experiment('RBAC rule, based on group membership', () => {
         server.route({
             method: 'GET',
             path: '/permit-if-all-group-membership',
-            handler: (request, reply) => reply({ok: true}),
+            handler: (request, reply) => reply({ ok: true }),
             config: {
                 plugins: {
                     rbac: {
@@ -983,7 +983,7 @@ experiment('RBAC complex rules', () => {
             server.route({
                 method: 'GET',
                 path: '/example',
-                handler: (request, reply) => reply({ok: true}),
+                handler: (request, reply) => reply({ ok: true }),
                 config: {
                     plugins: {
                         rbac: {
