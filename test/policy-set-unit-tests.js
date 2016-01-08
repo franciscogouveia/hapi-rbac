@@ -1,18 +1,18 @@
 'use strict';
 
-var Code = require('code');
-var Lab = require('lab');
+const Code = require('code');
+const Lab = require('lab');
 
-var lab = exports.lab = Lab.script();
-var experiment = lab.experiment;
-var test = lab.test;
+const lab = exports.lab = Lab.script();
+const experiment = lab.experiment;
+const test = lab.test;
 
-var expect = Code.expect;
+const expect = Code.expect;
 
-var Rbac = require('../');
+const Rbac = require('../');
 
 
-experiment('Policy set unit tests', function () {
+experiment('Policy set unit tests', () => {
 
     var policySet = {
         target: ['any-of', { type: 'group', value: 'writer' }, { type: 'group', value: 'publisher' }], // writer OR publisher
@@ -51,7 +51,7 @@ experiment('Policy set unit tests', function () {
         ]
     };
 
-    test('should permit premium writer', function (done) {
+    test('should permit premium writer', (done) => {
 
         var information = {
             username: 'user00001',
@@ -60,7 +60,7 @@ experiment('Policy set unit tests', function () {
             blocked: false
         };
 
-        Rbac.evaluatePolicy(policySet, information, function (err, applies) {
+        Rbac.evaluatePolicy(policySet, information, (err, applies) => {
 
             expect(err).to.not.exist();
 
@@ -70,7 +70,7 @@ experiment('Policy set unit tests', function () {
         });
     });
 
-    test('should deny blocked premium writer', function (done) {
+    test('should deny blocked premium writer', (done) => {
 
         var information = {
             username: 'bad_user',
@@ -79,7 +79,7 @@ experiment('Policy set unit tests', function () {
             blocked: false
         };
 
-        Rbac.evaluatePolicy(policySet, information, function (err, applies) {
+        Rbac.evaluatePolicy(policySet, information, (err, applies) => {
 
             expect(err).to.not.exist();
 
@@ -89,7 +89,7 @@ experiment('Policy set unit tests', function () {
         });
     });
 
-    test('should deny publisher without premium', function (done) {
+    test('should deny publisher without premium', (done) => {
 
         var information = {
             username: 'user00002',
@@ -98,7 +98,7 @@ experiment('Policy set unit tests', function () {
             blocked: false
         };
 
-        Rbac.evaluatePolicy(policySet, information, function (err, applies) {
+        Rbac.evaluatePolicy(policySet, information, (err, applies) => {
 
             expect(err).to.not.exist();
 
@@ -108,7 +108,7 @@ experiment('Policy set unit tests', function () {
         });
     });
 
-    test('should permit special publisher without premium', function (done) {
+    test('should permit special publisher without premium', (done) => {
 
         var information = {
             username: 'special_user',
@@ -117,7 +117,7 @@ experiment('Policy set unit tests', function () {
             blocked: false
         };
 
-        Rbac.evaluatePolicy(policySet, information, function (err, applies) {
+        Rbac.evaluatePolicy(policySet, information, (err, applies) => {
 
             expect(err).to.not.exist();
 
@@ -127,7 +127,7 @@ experiment('Policy set unit tests', function () {
         });
     });
 
-    test('should permit special writer without premium', function (done) {
+    test('should permit special writer without premium', (done) => {
 
         var information = {
             username: 'special_user',
@@ -136,7 +136,7 @@ experiment('Policy set unit tests', function () {
             blocked: false
         };
 
-        Rbac.evaluatePolicy(policySet, information, function (err, applies) {
+        Rbac.evaluatePolicy(policySet, information, (err, applies) => {
 
             expect(err).to.not.exist();
 
@@ -146,7 +146,7 @@ experiment('Policy set unit tests', function () {
         });
     });
 
-    test('should permit special publisher and writer without premium', function (done) {
+    test('should permit special publisher and writer without premium', (done) => {
 
         var information = {
             username: 'special_user',
@@ -155,7 +155,7 @@ experiment('Policy set unit tests', function () {
             blocked: false
         };
 
-        Rbac.evaluatePolicy(policySet, information, function (err, applies) {
+        Rbac.evaluatePolicy(policySet, information, (err, applies) => {
 
             expect(err).to.not.exist();
 
@@ -165,7 +165,7 @@ experiment('Policy set unit tests', function () {
         });
     });
 
-    test('should deny publisher with premium', function (done) {
+    test('should deny publisher with premium', (done) => {
 
         var information = {
             username: 'user00003',
@@ -174,7 +174,7 @@ experiment('Policy set unit tests', function () {
             blocked: false
         };
 
-        Rbac.evaluatePolicy(policySet, information, function (err, applies) {
+        Rbac.evaluatePolicy(policySet, information, (err, applies) => {
 
             expect(err).to.not.exist();
 

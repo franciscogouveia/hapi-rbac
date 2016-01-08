@@ -31,14 +31,14 @@
     },
     "dependencies": {
         "async": "^1.4.2",
-        "boom": "^2.8.0"
+        "boom": "^3.1.1"
     },
     "devDependencies": {
-        "code": "^1.5.0",
+        "code": "^2.1.0",
         "coveralls": "^2.11.6",
-        "hapi": "^9.0.3",
-        "hapi-auth-basic": "^3.0.0",
+        "hapi": "^12.0.0",
+        "hapi-auth-basic": "^4.1.0",
         "js-beautify": "^1.5.10",
-        "lab": "^6.2.0"
+        "lab": "^8.0.1"
     }
 }
