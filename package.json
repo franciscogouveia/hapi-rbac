@@ -1,44 +1,44 @@
 {
-    "name": "hapi-rbac",
-    "version": "0.2.0",
-    "description": "Role Based Access Control for Hapijs",
-    "preferGlobal": false,
-    "main": "lib/index.js",
-    "repository": "git@github.com:franciscogouveia/hapi-rbac.git",
-    "keywords": [
-        "hapijs",
-        "hapi",
-        "api",
-        "rbac",
-        "ac",
-        "access-control",
-        "rule"
-    ],
-    "author": {
-        "name": "Francisco de Gouveia",
-        "email": "francisco@de-gouveia.eu",
-        "url": "http://de-gouveia.eu"
-    },
-    "license": "ISC",
-    "scripts": {
-        "test": "lab -v",
-        "coverage": "lab -s -r lcov | coveralls",
-        "lint": "lab -dL",
-        "indent": "js-beautify lib/index.js"
-    },
-    "engines": {
-        "node": ">=4.0.0"
-    },
-    "dependencies": {
-        "async": "^1.4.2",
-        "boom": "^3.1.1"
-    },
-    "devDependencies": {
-        "code": "^2.1.0",
-        "coveralls": "^2.11.6",
-        "hapi": "^12.0.0",
-        "hapi-auth-basic": "^4.1.0",
-        "js-beautify": "^1.5.10",
-        "lab": "^8.0.1"
-    }
+  "name": "hapi-rbac",
+  "version": "1.0.0",
+  "description": "Role Based Access Control for Hapijs",
+  "preferGlobal": false,
+  "main": "lib/index.js",
+  "repository": "git@github.com:franciscogouveia/hapi-rbac.git",
+  "keywords": [
+    "hapijs",
+    "hapi",
+    "api",
+    "rbac",
+    "ac",
+    "access-control",
+    "rule"
+  ],
+  "author": {
+    "name": "Francisco de Gouveia",
+    "email": "francisco@de-gouveia.eu",
+    "url": "http://de-gouveia.eu"
+  },
+  "license": "ISC",
+  "scripts": {
+    "test": "lab -v",
+    "coverage": "lab -s -r lcov | coveralls",
+    "lint": "lab -dL",
+    "indent": "js-beautify lib/index.js"
+  },
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "dependencies": {
+    "async": "^1.4.2",
+    "boom": "^3.1.1"
+  },
+  "devDependencies": {
+    "code": "^2.1.0",
+    "coveralls": "^2.11.6",
+    "hapi": "^12.0.0",
+    "hapi-auth-basic": "^4.1.0",
+    "js-beautify": "^1.5.10",
+    "lab": "^8.0.1"
+  }
 }

@@ -8,6 +8,10 @@
 > A Rule Based Access Control module for hapi.
 > This is inspired by the [XACML](https://fr.wikipedia.org/wiki/XACML) policies.
 
+## Versions
+
+* `1.0.0` - Since this version, only node ^4.0 and hapi ^12.0.0 is supported. All the functionality and syntax remains the same.
+
 ## How to use it
 
 First, install
