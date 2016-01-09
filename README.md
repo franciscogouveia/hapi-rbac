@@ -24,7 +24,7 @@ npm install --save hapi-rbac
 
 Then, import the module in your hapi server instance
 
-```
+```js
 server.register({
   register: require('hapi-rbac')
 }, function(err) {
@@ -34,7 +34,7 @@ server.register({
 
 Then, define the rules in your routes
 
-```
+```js
 server.route({
   method: 'GET',
   path: '/example',
@@ -90,7 +90,7 @@ Check the following examples:
 
 #### all-of
 
-```
+```js
 ['all-of', {type: 'group', value: 'writer'}, {type: 'premium', value: true}]
 ```
 
@@ -98,7 +98,7 @@ With this target, only users in group `writer` **and** with `premium` account wi
 
 So, if the logged in user has the following `request.auth.credentials` document:
 
-```
+```js
 {
   username: 'user00001',
   group: ['writer'], // match
@@ -111,7 +111,7 @@ Then, the *rule* or *policy* with the configured *target* will be evaluated.
 
 But, if the logged in user has one of the following `request.auth.credentials` documents:
 
-```
+```js
 {
   username: 'user00002',
   group: ['writer'], // match
@@ -120,7 +120,7 @@ But, if the logged in user has one of the following `request.auth.credentials` d
 }
 ```
 
-```
+```js
 {
   username: 'user00003',
   group: ['reader'], // do not match :-(
@@ -142,7 +142,7 @@ With this target, any user in the group `writer` **or** with `premium` account *
 
 So, users with the following `request.auth.credentials` documents will be matched:
 
-```
+```js
 {
   username: 'user00001',
   group: ['writer'], // match
@@ -151,7 +151,7 @@ So, users with the following `request.auth.credentials` documents will be matche
 }
 ```
 
-```
+```js
 {
   username: 'user00002', // match
   group: ['reader'],
@@ -160,7 +160,7 @@ So, users with the following `request.auth.credentials` documents will be matche
 }
 ```
 
-```
+```js
 {
   username: 'user00003',
   group: ['reader'],
@@ -169,7 +169,7 @@ So, users with the following `request.auth.credentials` documents will be matche
 }
 ```
 
-```
+```js
 {
   username: 'user00004',
   group: ['writer'], // match
@@ -180,7 +180,7 @@ So, users with the following `request.auth.credentials` documents will be matche
 
 But, not the one with the following document:
 
-```
+```js
 {
   username: 'user00005',
   group: ['reader'],
@@ -240,7 +240,7 @@ A __Policy__ is a _set of rules_. It contains:
 
 Example
 
-```
+```js
 {
   target: ['all-of', {type: 'group', value: 'writer'}, {type: 'premium', value: true}], // if writer AND premium account
   apply: 'deny-overrides', // permit, unless one denies
@@ -271,7 +271,7 @@ A __Policy Set__ is a set of __Policies__. It contains:
 
 Example
 
-```
+```js
 {
   target: ['any-of', {type: 'group', value: 'writer'}, {type: 'group', value: 'publisher'}], // writer OR publisher
   apply: 'permit-overrides', // deny, unless one permits
