@@ -1042,3 +1042,144 @@ experiment('RBAC complex rules', () => {
     });
 
 });
+
+
+
+/**
+ * Rule based access control policy tests, with callback function configuration
+ **/
+experiment('Dynamic RBAC policy with callback function', () => {
+
+    let server;
+
+    before((done) => {
+        // Set up the hapi server route
+        server = new Hapi.Server();
+
+        server.connection();
+
+        const users = { };
+
+        users.sg1001 = {
+            'scope': 'admin',
+            'firstName': 'Some',
+            'lastName': 'Guy',
+            'username': 'sg1001',
+            'password': 'pwtest',
+            'group': ['reader']
+        };
+
+        server.register([
+            {
+                register: require('hapi-auth-basic')
+            },
+            {
+                register: require('../')
+            }
+        ], (err) => {
+
+            if (err) {
+                return done(err);
+            }
+
+            server.auth.strategy('default', 'basic', 'required', {
+                validateFunc: (request, username, password, callback) => {
+
+                    if (!users[username] || users[username].password !== password) {
+                        return callback(Boom.unauthorized('Wrong credentials'), false);
+                    }
+
+                    callback(null, true, users[username]);
+                }
+            });
+
+            done();
+
+        });
+
+    });
+
+    test('Should have access to the route, with policy targeting the username', (done) => {
+
+        server.route({
+            method: 'GET',
+            path: '/allow-username',
+            handler: (request, reply) => reply({ ok: true }),
+            config: {
+                plugins: {
+                    rbac: (request, callback) => {
+
+                        /* Usually retrieved from a DB... */
+                        const policy = {
+                            target: ['any-of', { type: 'username', value: 'sg1001' }],
+                            apply: 'permit-overrides',
+                            rules: [
+                                {
+                                    'effect': 'permit'
+                                }
+                            ]
+                        };
+
+                        callback(null, policy);
+                    }
+                }
+            }
+        });
+
+        server.inject({
+            method: 'GET',
+            url: '/allow-username',
+            headers: {
+                authorization: 'Basic ' + (new Buffer('sg1001:pwtest', 'utf8')).toString('base64')
+            }
+        }, (response) => {
+
+            expect(response.statusCode).to.equal(200);
+
+            done();
+        });
+    });
+
+    test('Should not have access to the route, with policy targeting the username', (done) => {
+
+        server.route({
+            method: 'GET',
+            path: '/disallow-username',
+            handler: (request, reply) => reply({ ok: true }),
+            config: {
+                plugins: {
+
+                    rbac: (request, callback) => {
+
+                        /* Usually retrieved from a DB... */
+                        const policy = {
+                            target: ['any-of', { type: 'username', value: 'sg1001' }],
+                            apply: 'permit-overrides',
+                            rules: [
+                                {
+                                    'effect': 'deny'
+                                }
+                            ]
+                        };
+
+                        callback(null, policy);
+                    }
+                }
+            }
+        });
+
+        server.inject({
+            method: 'GET',
+            url: '/disallow-username',
+            headers: {
+                authorization: 'Basic ' + (new Buffer('sg1001:pwtest', 'utf8')).toString('base64')
+            }
+        }, (response) => {
+
+            expect(response.statusCode).to.equal(401);
+
+            done();
+        });
+    });
+
+});
