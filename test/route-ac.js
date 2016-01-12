@@ -119,7 +119,7 @@ experiment('Generic tests, with RBAC plugin configured', () => {
  **/
 experiment('RBAC policy, based on username', () => {
 
-    var server;
+    let server;
 
     before((done) => {
         // Set up the hapi server route
@@ -127,7 +127,7 @@ experiment('RBAC policy, based on username', () => {
 
         server.connection();
 
-        var users = { };
+        const users = { };
 
         users.sg1001 = {
             'scope': 'admin',
@@ -245,7 +245,7 @@ experiment('RBAC policy, based on username', () => {
  **/
 experiment('RBAC policy, based on group membership', () => {
 
-    var server;
+    let server;
 
     before((done) => {
         // Set up the hapi server route
@@ -253,7 +253,7 @@ experiment('RBAC policy, based on group membership', () => {
 
         server.connection();
 
-        var users = { };
+        const users = { };
 
         users.sg1002 = {
             'scope': 'admin',
@@ -521,7 +521,7 @@ experiment('RBAC policy, based on group membership', () => {
  **/
 experiment('RBAC rule, based on username', () => {
 
-    var server;
+    let server;
 
     before((done) => {
 
@@ -530,7 +530,7 @@ experiment('RBAC rule, based on username', () => {
 
         server.connection();
 
-        var users = { };
+        const users = { };
 
         users.sg1004 = {
             'scope': 'admin',
@@ -928,7 +928,7 @@ experiment('RBAC rule, based on group membership', () => {
  **/
 experiment('RBAC complex rules', () => {
 
-    var server;
+    let server;
 
     before((done) => {
         // Set up the hapi server route
@@ -936,7 +936,7 @@ experiment('RBAC complex rules', () => {
 
         server.connection();
 
-        var users = { };
+        const users = { };
 
         users.sg1007 = {
             'scope': 'admin',

@@ -14,11 +14,11 @@ const Rbac = require('../');
 
 experiment('Target unit tests (all-of)', () => {
 
-    var target = ['all-of', { type: 'group', value: 'writer' }, { type: 'premium', value: true }];
+    const target = ['all-of', { type: 'group', value: 'writer' }, { type: 'premium', value: true }];
 
     test('should apply (full match)', (done) => {
 
-        var information = {
+        const information = {
             username: 'user00001',
             group: ['writer'],
             premium: true
