@@ -87,15 +87,15 @@ server.route({
           resource: request.route.path // Use the path as a resource identifier
         };
 
-        db.collection('policies').findOne(query, function(err, result) {
+        db.collection('policies').findOne(query, function(err, policy) {
 
           if(err) {
             return callback(err);
           }
 
           // callback with the found policy
-          // if result is null, then hapi-rbac assumes that there is no policy configured for the route
-          callback(null, result);
+          // if policy is null, then hapi-rbac assumes that there is no policy configured for the route
+          callback(null, policy);
         });
       }
     }
