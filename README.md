@@ -11,6 +11,7 @@
 
 ## Versions
 
+* `1.1.0` - Added ability to dynamically retrieve policies for the route
 * `1.0.0` - Since this version, only node `^4.0` and hapi `^12.0.0` is supported.
    All the functionality and syntax remains the same.
 
@@ -64,6 +65,43 @@ server.route({
 ```
 
 This configuration will allow all the users in the `readers` group to access the route, except user `bad_guy`.
+
+
+It is also possible to retrieve the rules dynamically (e.g.: from a database). Instead of defining the policies directly, use a callback function instead
+
+```js
+server.route({
+  method: 'GET',
+  path: '/example',
+  handler: function(request, reply) {
+    reply({
+      ok: true
+    });
+  },
+  config: {
+    plugins: {
+      rbac: function(request, callback) {
+
+        /* Retrieve your policies from a database */
+        const query = {
+          resource: request.route.path // Use the path as a resource identifier
+        };
+
+        db.collection('policies').findOne(query, function(err, result) {
+
+          if(err) {
+            return callback(err);
+          }
+
+          // callback with the found policy
+          // if result is null, then hapi-rbac assumes that there is no policy configured for the route
+          callback(null, result);
+        });
+      }
+    }
+  }
+});
+```
 
 ## Requirement
 
