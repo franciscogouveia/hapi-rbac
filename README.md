@@ -84,7 +84,10 @@ server.route({
 
         /* Retrieve your policies from a database */
         const query = {
-          resource: request.route.path // Use the path as a resource identifier
+          resource: { // Use the path and method as a resource identifier
+            path: request.route.path,
+            method: request.route.method
+          }
         };
 
         db.collection('policies').findOne(query, function(err, policy) {
@@ -101,6 +104,28 @@ server.route({
     }
   }
 });
+```
+
+In this example, it is assumed that your policies have a resource key with path and method sub-keys. Example:
+
+```js
+{
+  resource: { // resource identifies what is being requested
+    path: '/example',
+    method: 'get'
+  },
+  target: ['any-of', {type: 'group', value: 'readers'}],
+  apply: 'deny-overrides', // Combinatory algorithm
+  rules: [
+    {
+      target: ['any-of', {type: 'username', value: 'bad_guy'}],
+      effect: 'deny'
+    },
+    {
+      effect: 'permit'
+    }
+  ]
+}
 ```
 
 ## Requirement
