@@ -1182,4 +1182,39 @@ experiment('Dynamic RBAC policy with callback function', () => {
         });
     });
 
+    test('Should have access to the route if no policy is configured', (done) => {
+
+        server.route({
+            method: 'GET',
+            path: '/unrestricted-access',
+            handler: (request, reply) => reply({ ok: true }),
+            config: {
+                plugins: {
+
+                    rbac: (request, callback) => {
+
+                        /* Usually retrieved from a DB... */
+                        const policy = null;
+
+                        callback(null, policy);
+                    }
+                }
+            }
+        });
+
+        server.inject({
+            method: 'GET',
+            url: '/unrestricted-access',
+            headers: {
+                authorization: 'Basic ' + (new Buffer('sg1001:pwtest', 'utf8')).toString('base64')
+            }
+        }, (response) => {
+
+            expect(response.statusCode).to.equal(200);
+            expect(response.result.ok).to.exist().and.equal(true);
+
+            done();
+        });
+    });
+
 });
