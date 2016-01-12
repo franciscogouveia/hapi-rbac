@@ -14,7 +14,7 @@ const Rbac = require('../');
 
 experiment('Policy set unit tests', () => {
 
-    var policySet = {
+    const policySet = {
         target: ['any-of', { type: 'group', value: 'writer' }, { type: 'group', value: 'publisher' }], // writer OR publisher
         apply: 'permit-overrides', // deny, unless one permits
         policies: [
@@ -53,7 +53,7 @@ experiment('Policy set unit tests', () => {
 
     test('should permit premium writer', (done) => {
 
-        var information = {
+        const information = {
             username: 'user00001',
             group: ['writer'],
             premium: true,
@@ -72,7 +72,7 @@ experiment('Policy set unit tests', () => {
 
     test('should deny blocked premium writer', (done) => {
 
-        var information = {
+        const information = {
             username: 'bad_user',
             group: ['writer'],
             premium: true,
@@ -91,7 +91,7 @@ experiment('Policy set unit tests', () => {
 
     test('should deny publisher without premium', (done) => {
 
-        var information = {
+        const information = {
             username: 'user00002',
             group: ['publisher'],
             premium: false,
@@ -110,7 +110,7 @@ experiment('Policy set unit tests', () => {
 
     test('should permit special publisher without premium', (done) => {
 
-        var information = {
+        const information = {
             username: 'special_user',
             group: ['publisher'],
             premium: false,
@@ -129,7 +129,7 @@ experiment('Policy set unit tests', () => {
 
     test('should permit special writer without premium', (done) => {
 
-        var information = {
+        const information = {
             username: 'special_user',
             group: ['writer'],
             premium: false,
@@ -148,7 +148,7 @@ experiment('Policy set unit tests', () => {
 
     test('should permit special publisher and writer without premium', (done) => {
 
-        var information = {
+        const information = {
             username: 'special_user',
             group: ['writer', 'publisher'],
             premium: false,
@@ -167,7 +167,7 @@ experiment('Policy set unit tests', () => {
 
     test('should deny publisher with premium', (done) => {
 
-        var information = {
+        const information = {
             username: 'user00003',
             group: ['publisher'],
             premium: true,
