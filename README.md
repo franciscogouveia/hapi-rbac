@@ -11,6 +11,7 @@
 
 ## Versions
 
+* `1.2.0` - Global default configuration is now possible
 * `1.1.0` - Added ability to dynamically retrieve policies for the route
 * `1.0.0` - Since this version, only node `^4.0` and hapi `^12.0.0` is supported.
    All the functionality and syntax remains the same.
@@ -67,7 +68,62 @@ server.route({
 This configuration will allow all the users in the `readers` group to access the route, except user `bad_guy`.
 
 
-It is also possible to retrieve the rules dynamically (e.g.: from a database). Instead of defining the policies directly, use a callback function instead
+Do you want to configure a default access control policy for all the routes? Just pass policy key in options, when requiring `hapi-rbac`:
+
+```js
+server.register({
+  register: require('hapi-rbac'),
+  options: {
+    policy: {
+      target: ['any-of', {type: 'group', value: 'readers'}],
+      apply: 'deny-overrides', // Combinatory algorithm
+      rules: [
+        {
+          target: ['any-of', {type: 'username', value: 'bad_guy'}],
+          effect: 'deny'
+        },
+        {
+          effect: 'permit'
+        }
+      ]
+    }
+  }
+}, function(err) {
+  ...
+});
+```
+
+To override the default access control policy, just configure a policy at the route level as described before.
+
+
+It is also possible to retrieve the rules dynamically (e.g.: from a database). Instead of defining the policies directly, use a callback function instead.
+
+You can do it **globally**
+
+```js
+server.register({
+  register: require('hapi-rbac'),
+  options: {
+    policy: {
+      target: ['any-of', {type: 'group', value: 'readers'}],
+      apply: 'deny-overrides', // Combinatory algorithm
+      rules: [
+        {
+          target: ['any-of', {type: 'username', value: 'bad_guy'}],
+          effect: 'deny'
+        },
+        {
+          effect: 'permit'
+        }
+      ]
+    }
+  }
+}, function(err) {
+  ...
+});
+```
+
+or/and at the **route** level
 
 ```js
 server.route({
@@ -127,6 +183,7 @@ In this example, it is assumed that your policies have a resource key with path 
   ]
 }
 ```
+
 
 ## Requirement
 
