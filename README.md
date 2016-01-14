@@ -95,7 +95,7 @@ server.register({
 });
 ```
 
-In this example, it is assumed that your policies have a resource key with `path` and `method` sub-keys.
+In this example, it is assumed that your policies have a `resource` key with `path` and `method` sub-keys.
 
 ```js
 {
