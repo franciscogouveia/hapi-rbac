@@ -24,7 +24,7 @@ First, install
 npm install --save hapi-rbac
 ```
 
-Then, import the module in your hapi server instance
+Then, import the module in your hapi server instance.
 
 ```js
 server.register({
@@ -34,7 +34,90 @@ server.register({
 });
 ```
 
-Then, define the rules in your routes
+If you wish to define a default access control policy for the routes, you can do it with `policy` key inside the `options`.
+
+```js
+server.register({
+  register: require('hapi-rbac'),
+  options: {
+    policy: {
+      target: ['any-of', {type: 'group', value: 'readers'}],
+      apply: 'deny-overrides', // Combinatory algorithm
+      rules: [
+        {
+          target: ['any-of', {type: 'username', value: 'bad_guy'}],
+          effect: 'deny'
+        },
+        {
+          effect: 'permit'
+        }
+      ]
+    }
+  }
+}, function(err) {
+  ...
+});
+```
+
+This configuration will allow access to the routes to all the users in the `readers` group, except to the user `bad_guy`.
+
+
+It is also possible to retrieve the policies dynamically (e.g.: from a database). Instead of defining them directly, use a callback function instead.
+
+```js
+server.register({
+  register: require('hapi-rbac'),
+  options: {
+    policy: function(request, callback) {
+
+      /* Retrieve your policies from a database */
+      const query = {
+        resource: { // Use the path and method as a resource identifier
+          path: request.route.path,
+          method: request.route.method
+        }
+      };
+
+      db.collection('policies').findOne(query, function(err, policy) {
+
+        if(err) {
+          return callback(err);
+        }
+
+        // callback with the found policy
+        // if policy is null, then hapi-rbac assumes that there is no policy configured for the route
+        callback(null, policy);
+      });
+    }
+  }
+}, function(err) {
+  ...
+});
+```
+
+In this example, it is assumed that your policies have a resource key with `path` and `method` sub-keys.
+
+```js
+{
+  resource: { // resource identifies what is being requested
+    path: '/example',
+    method: 'get'
+  },
+  target: ['any-of', {type: 'group', value: 'readers'}],
+  apply: 'deny-overrides', // Combinatory algorithm
+  rules: [
+    {
+      target: ['any-of', {type: 'username', value: 'bad_guy'}],
+      effect: 'deny'
+    },
+    {
+      effect: 'permit'
+    }
+  ]
+}
+```
+
+If you wish to define access control policies for a single route, you can do it at the route level configuration:
 
 ```js
 server.route({
@@ -65,65 +148,10 @@ server.route({
 });
 ```
 
-This configuration will allow all the users in the `readers` group to access the route, except user `bad_guy`.
+If you have access control policies configured globally, this configuration overrides them.
 
 
-Do you want to configure a default access control policy for all the routes? Just pass policy key in options, when requiring `hapi-rbac`:
-
-```js
-server.register({
-  register: require('hapi-rbac'),
-  options: {
-    policy: {
-      target: ['any-of', {type: 'group', value: 'readers'}],
-      apply: 'deny-overrides', // Combinatory algorithm
-      rules: [
-        {
-          target: ['any-of', {type: 'username', value: 'bad_guy'}],
-          effect: 'deny'
-        },
-        {
-          effect: 'permit'
-        }
-      ]
-    }
-  }
-}, function(err) {
-  ...
-});
-```
-
-To override the default access control policy, just configure a policy at the route level as described before.
-
-
-It is also possible to retrieve the rules dynamically (e.g.: from a database). Instead of defining the policies directly, use a callback function instead.
-
-You can do it **globally**
-
-```js
-server.register({
-  register: require('hapi-rbac'),
-  options: {
-    policy: {
-      target: ['any-of', {type: 'group', value: 'readers'}],
-      apply: 'deny-overrides', // Combinatory algorithm
-      rules: [
-        {
-          target: ['any-of', {type: 'username', value: 'bad_guy'}],
-          effect: 'deny'
-        },
-        {
-          effect: 'permit'
-        }
-      ]
-    }
-  }
-}, function(err) {
-  ...
-});
-```
-
-or/and at the **route** level
+You can also have dynamic access control policy retrieval at the route level:
 
 ```js
 server.route({
@@ -162,28 +190,24 @@ server.route({
 });
 ```
 
-In this example, it is assumed that your policies have a resource key with path and method sub-keys. Example:
+You can disable a global access control policy at the route level, by using the string `none`:.
 
-```js
-{
-  resource: { // resource identifies what is being requested
-    path: '/example',
-    method: 'get'
-  },
-  target: ['any-of', {type: 'group', value: 'readers'}],
-  apply: 'deny-overrides', // Combinatory algorithm
-  rules: [
-    {
-      target: ['any-of', {type: 'username', value: 'bad_guy'}],
-      effect: 'deny'
-    },
-    {
-      effect: 'permit'
-    }
-  ]
-}
 ```
-
+server.route({
+  method: 'GET',
+  path: '/example',
+  handler: function(request, reply) {
+    reply({
+      ok: true
+    });
+  },
+  config: {
+    plugins: {
+      rbac: 'none'
+    }
+  }
+});
+```
 
 ## Requirement
 
