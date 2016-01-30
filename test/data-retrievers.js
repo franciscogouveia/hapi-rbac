@@ -26,7 +26,7 @@ experiment('RBAC internal modular information retrieval', () => {
 
         Rbac.registerDataRetriever('test', retriever);
 
-        expect(Rbac.retrieveData('test', 'x', {})).to.equal('key-x');
+        expect(Rbac.retrieveData('test:x', {})).to.equal('key-x');
 
         done();
     });
@@ -44,7 +44,7 @@ experiment('RBAC internal modular information retrieval', () => {
         Rbac.registerDataRetriever('test-override', retriever1);
         Rbac.registerDataRetriever('test-override', retriever2, {override: true});
 
-        expect(Rbac.retrieveData('test-override', 'test', {})).to.equal('test-2');
+        expect(Rbac.retrieveData('test-override:test', {})).to.equal('test-2');
 
         done();
     });
@@ -79,10 +79,10 @@ experiment('RBAC internal modular information retrieval', () => {
         Rbac.registerDataRetriever(['test-override-multiple-1', 'test-override-multiple-2', 'test-override-multiple-3'], retriever1);
         Rbac.registerDataRetriever(['test-override-multiple-2', 'test-override-multiple-4'], retriever2, {override: true}); // test-override-multiple-2 collides
 
-        expect(Rbac.retrieveData('test-override-multiple-1', 'test', {})).to.equal('test-1');
-        expect(Rbac.retrieveData('test-override-multiple-2', 'test', {})).to.equal('test-2');
-        expect(Rbac.retrieveData('test-override-multiple-3', 'test', {})).to.equal('test-1');
-        expect(Rbac.retrieveData('test-override-multiple-4', 'test', {})).to.equal('test-2');
+        expect(Rbac.retrieveData('test-override-multiple-1:test', {})).to.equal('test-1');
+        expect(Rbac.retrieveData('test-override-multiple-2:test', {})).to.equal('test-2');
+        expect(Rbac.retrieveData('test-override-multiple-3:test', {})).to.equal('test-1');
+        expect(Rbac.retrieveData('test-override-multiple-4:test', {})).to.equal('test-2');
 
         done();
     });
