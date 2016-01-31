@@ -10,11 +10,18 @@ const test = lab.test;
 const expect = Code.expect;
 
 const Rbac = require('../');
+const DataRetrievalRouter = Rbac.DataRetrievalRouter;
 
 
 experiment('Target unit tests (all-of)', () => {
 
     const target = ['all-of', { type: 'group', value: 'writer' }, { type: 'premium', value: true }];
+
+    // Register mocked data retriever
+    const dataRetriever = new DataRetrievalRouter();
+    dataRetriever.register('credentials', (source, key, context) => {
+        return context[key];
+    }, {override: true});
 
     test('should apply (full match)', (done) => {
 
@@ -24,7 +31,7 @@ experiment('Target unit tests (all-of)', () => {
             premium: true
         };
 
-        Rbac.evaluateTarget(target, information, (err, applies) => {
+        Rbac.evaluateTarget(target, dataRetriever.createChild(information), (err, applies) => {
 
             expect(err).to.not.exist();
 
@@ -42,7 +49,7 @@ experiment('Target unit tests (all-of)', () => {
             premium: false
         };
 
-        Rbac.evaluateTarget(target, information, (err, applies) => {
+        Rbac.evaluateTarget(target, dataRetriever.createChild(information), (err, applies) => {
 
             expect(err).to.not.exist();
 
@@ -60,7 +67,7 @@ experiment('Target unit tests (all-of)', () => {
             premium: false
         };
 
-        Rbac.evaluateTarget(target, information, (err, applies) => {
+        Rbac.evaluateTarget(target, dataRetriever.createChild(information), (err, applies) => {
 
             expect(err).to.not.exist();
 
@@ -79,6 +86,12 @@ experiment('Target unit tests (any-of)', () => {
         value: 'user00002'
     }];
 
+    // Register mocked data retriever
+    const dataRetriever = new DataRetrievalRouter();
+    dataRetriever.register('credentials', (source, key, context) => {
+        return context[key];
+    }, {override: true});
+
     test('should apply (partial match)', (done) => {
 
         const information = {
@@ -87,7 +100,7 @@ experiment('Target unit tests (any-of)', () => {
             premium: true
         };
 
-        Rbac.evaluateTarget(target, information, (err, applies) => {
+        Rbac.evaluateTarget(target, dataRetriever.createChild(information), (err, applies) => {
 
             expect(err).to.not.exist();
 
@@ -105,7 +118,7 @@ experiment('Target unit tests (any-of)', () => {
             premium: true
         };
 
-        Rbac.evaluateTarget(target, information, (err, applies) => {
+        Rbac.evaluateTarget(target, dataRetriever.createChild(information), (err, applies) => {
 
             expect(err).to.not.exist();
 
@@ -123,7 +136,7 @@ experiment('Target unit tests (any-of)', () => {
             premium: false
         };
 
-        Rbac.evaluateTarget(target, information, (err, applies) => {
+        Rbac.evaluateTarget(target, dataRetriever.createChild(information), (err, applies) => {
 
             expect(err).to.not.exist();
 

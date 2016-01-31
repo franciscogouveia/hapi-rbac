@@ -10,9 +10,15 @@ const test = lab.test;
 const expect = Code.expect;
 
 const Rbac = require('../');
+const DataRetrievalRouter = Rbac.DataRetrievalRouter;
 
 
 experiment('Policy set unit tests', () => {
+
+    const dataRetriever = new DataRetrievalRouter();
+    dataRetriever.register('credentials', (source, key, context) => {
+        return context[key];
+    }, {override: true});
 
     const policySet = {
         target: ['any-of', { type: 'group', value: 'writer' }, { type: 'group', value: 'publisher' }], // writer OR publisher
@@ -60,7 +66,7 @@ experiment('Policy set unit tests', () => {
             blocked: false
         };
 
-        Rbac.evaluatePolicy(policySet, information, (err, applies) => {
+        Rbac.evaluatePolicy(policySet, dataRetriever.createChild(information), (err, applies) => {
 
             expect(err).to.not.exist();
 
@@ -79,7 +85,7 @@ experiment('Policy set unit tests', () => {
             blocked: false
         };
 
-        Rbac.evaluatePolicy(policySet, information, (err, applies) => {
+        Rbac.evaluatePolicy(policySet, dataRetriever.createChild(information), (err, applies) => {
 
             expect(err).to.not.exist();
 
@@ -98,7 +104,7 @@ experiment('Policy set unit tests', () => {
             blocked: false
         };
 
-        Rbac.evaluatePolicy(policySet, information, (err, applies) => {
+        Rbac.evaluatePolicy(policySet, dataRetriever.createChild(information), (err, applies) => {
 
             expect(err).to.not.exist();
 
@@ -117,7 +123,7 @@ experiment('Policy set unit tests', () => {
             blocked: false
         };
 
-        Rbac.evaluatePolicy(policySet, information, (err, applies) => {
+        Rbac.evaluatePolicy(policySet, dataRetriever.createChild(information), (err, applies) => {
 
             expect(err).to.not.exist();
 
@@ -136,7 +142,7 @@ experiment('Policy set unit tests', () => {
             blocked: false
         };
 
-        Rbac.evaluatePolicy(policySet, information, (err, applies) => {
+        Rbac.evaluatePolicy(policySet, dataRetriever.createChild(information), (err, applies) => {
 
             expect(err).to.not.exist();
 
@@ -155,7 +161,7 @@ experiment('Policy set unit tests', () => {
             blocked: false
         };
 
-        Rbac.evaluatePolicy(policySet, information, (err, applies) => {
+        Rbac.evaluatePolicy(policySet, dataRetriever.createChild(information), (err, applies) => {
 
             expect(err).to.not.exist();
 
@@ -174,7 +180,7 @@ experiment('Policy set unit tests', () => {
             blocked: false
         };
 
-        Rbac.evaluatePolicy(policySet, information, (err, applies) => {
+        Rbac.evaluatePolicy(policySet, dataRetriever.createChild(information), (err, applies) => {
 
             expect(err).to.not.exist();
 
