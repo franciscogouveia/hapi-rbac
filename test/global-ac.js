@@ -119,6 +119,30 @@ experiment('Global RBAC policy, based on username', () => {
                 }
             });
 
+
+            // If param1 is 'forbiddenParam', access should be denied. Always allowed otherwise.
+            server.route({
+                method: 'GET',
+                path: '/route-params/{param1}',
+                handler: (request, reply) => reply({ ok: true }),
+                config: {
+                    plugins: {
+                        rbac: {
+                            apply: 'deny-overrides',
+                            rules: [
+                                {
+                                    target: ['any-of', { type: 'params:param1', value: 'forbiddenParam' }],
+                                    'effect': 'deny'
+                                },
+                                {
+                                    'effect': 'permit'
+                                }
+                            ]
+                        }
+                    }
+                }
+            });
+
             done();
 
         });
@@ -190,11 +214,11 @@ experiment('Global RBAC policy, based on username', () => {
     });
 
 
-    test('Should have access to the route, with disabled ac', (done) => {
+    test('Should allow access to the route with params', (done) => {
 
         server.inject({
             method: 'GET',
-            url: '/disabled-ac',
+            url: '/route-params/validParam',
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
             }
@@ -205,6 +229,23 @@ experiment('Global RBAC policy, based on username', () => {
             done();
         });
     });
+
+    test('Should deny access to the route with denied param', (done) => {
+
+        server.inject({
+            method: 'GET',
+            url: '/route-params/forbiddenParam',
+            headers: {
+                authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
+            }
+        }, (response) => {
+
+            expect(response.statusCode).to.equal(401);
+
+            done();
+        });
+    });
+
 });
 
 
