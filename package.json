@@ -1,6 +1,6 @@
 {
   "name": "hapi-rbac",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Rule Based Access Control for Hapijs",
   "preferGlobal": false,
   "main": "lib/index.js",
@@ -31,7 +31,9 @@
   },
   "dependencies": {
     "async": "^1.4.2",
-    "boom": "^3.1.1"
+    "boom": "^3.1.1",
+    "hoek": "^3.0.4",
+    "joi": "^7.2.3"
   },
   "devDependencies": {
     "code": "^2.1.0",

@@ -10,6 +10,7 @@ const test = lab.test;
 const expect = Code.expect;
 
 const Rbac = require('../');
+const DataRetrievalRouter = Rbac.DataRetrievalRouter;
 
 
 experiment('Rule unit tests (permit)', () => {
@@ -19,6 +20,12 @@ experiment('Rule unit tests (permit)', () => {
         effect: 'permit'
     };
 
+    // Register mocked data retriever
+    const dataRetriever = new DataRetrievalRouter();
+    dataRetriever.register('credentials', (source, key, context) => {
+        return context[key];
+    }, {override: true});
+
     test('should permit publisher administrator', (done) => {
 
         const information = {
@@ -26,7 +33,7 @@ experiment('Rule unit tests (permit)', () => {
             group: ['administrator', 'publisher']
         };
 
-        Rbac.evaluatePolicy(rule, information, (err, result) => {
+        Rbac.evaluatePolicy(rule, dataRetriever.createChild(information), (err, result) => {
 
             expect(err).to.not.exist();
 
@@ -43,7 +50,7 @@ experiment('Rule unit tests (permit)', () => {
             group: ['publisher']
         };
 
-        Rbac.evaluatePolicy(rule, information, (err, result) => {
+        Rbac.evaluatePolicy(rule, dataRetriever.createChild(information), (err, result) => {
 
             expect(err).to.not.exist();
 
@@ -60,7 +67,7 @@ experiment('Rule unit tests (permit)', () => {
             group: ['administrator']
         };
 
-        Rbac.evaluatePolicy(rule, information, (err, result) => {
+        Rbac.evaluatePolicy(rule, dataRetriever.createChild(information), (err, result) => {
 
             expect(err).to.not.exist();
 
@@ -82,6 +89,12 @@ experiment('Rule unit tests (deny)', () => {
         effect: 'deny'
     };
 
+    // Register mocked data retriever
+    const dataRetriever = new DataRetrievalRouter();
+    dataRetriever.register('credentials', (source, key, context) => {
+        return context[key];
+    }, {override: true});
+
     test('should deny user in blacklist group', (done) => {
 
         const information = {
@@ -90,7 +103,7 @@ experiment('Rule unit tests (deny)', () => {
             verified: true
         };
 
-        Rbac.evaluatePolicy(rule, information, (err, result) => {
+        Rbac.evaluatePolicy(rule, dataRetriever.createChild(information), (err, result) => {
 
             expect(err).to.not.exist();
 
@@ -108,7 +121,7 @@ experiment('Rule unit tests (deny)', () => {
             verified: true
         };
 
-        Rbac.evaluatePolicy(rule, information, (err, result) => {
+        Rbac.evaluatePolicy(rule, dataRetriever.createChild(information), (err, result) => {
 
             expect(err).to.not.exist();
 
@@ -126,7 +139,7 @@ experiment('Rule unit tests (deny)', () => {
             verified: false
         };
 
-        Rbac.evaluatePolicy(rule, information, (err, result) => {
+        Rbac.evaluatePolicy(rule, dataRetriever.createChild(information), (err, result) => {
 
             expect(err).to.not.exist();
 
@@ -144,7 +157,7 @@ experiment('Rule unit tests (deny)', () => {
             verified: true
         };
 
-        Rbac.evaluatePolicy(rule, information, (err, result) => {
+        Rbac.evaluatePolicy(rule, dataRetriever.createChild(information), (err, result) => {
 
             expect(err).to.not.exist();
 

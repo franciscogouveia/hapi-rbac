@@ -2,6 +2,7 @@
 
 const Hapi = require('hapi');
 const Boom = require('boom');
+const Joi = require('joi');
 const Code = require('code');
 const Lab = require('lab');
 
@@ -119,6 +120,132 @@ experiment('Global RBAC policy, based on username', () => {
                 }
             });
 
+
+            // If param1 is 'forbiddenParam', access should be denied. Always allowed otherwise.
+            server.route({
+                method: 'GET',
+                path: '/route-params/{param1}',
+                handler: (request, reply) => reply({ ok: true }),
+                config: {
+                    plugins: {
+                        rbac: {
+                            apply: 'deny-overrides',
+                            rules: [
+                                {
+                                    target: ['any-of', { type: 'params:param1', value: 'forbiddenParam' }],
+                                    'effect': 'deny'
+                                },
+                                {
+                                    'effect': 'permit'
+                                }
+                            ]
+                        }
+                    }
+                }
+            });
+
+
+            // If query param1 is 'forbiddenParam', access should be denied. Always allowed otherwise.
+            server.route({
+                method: 'GET',
+                path: '/route-query-params',
+                handler: (request, reply) => reply({ ok: true }),
+                config: {
+                    validate: {
+                        query: {
+                            param1: Joi.string().required()
+                        }
+                    },
+                    plugins: {
+                        rbac: {
+                            apply: 'deny-overrides',
+                            rules: [
+                                {
+                                    target: ['any-of', { type: 'query:param1', value: 'forbiddenParam' }],
+                                    'effect': 'deny'
+                                },
+                                {
+                                    'effect': 'permit'
+                                }
+                            ]
+                        }
+                    }
+                }
+            });
+
+            // If request method is 'get', access should be denied. This is a stupid example, this rule would only make sense in a global configuration.
+            server.route({
+                method: 'GET',
+                path: '/route-request-get-deny',
+                handler: (request, reply) => reply({ ok: true }),
+                config: {
+                    plugins: {
+                        rbac: {
+                            apply: 'deny-overrides',
+                            rules: [
+                                {
+                                    target: ['any-of', { type: 'request:method', value: 'get' }],
+                                    'effect': 'deny'
+                                },
+                                {
+                                    'effect': 'permit'
+                                }
+                            ]
+                        }
+                    }
+                }
+            });
+
+            // If request method is 'get', access should be denied. This is a stupid example, this rule would only make sense in a global configuration.
+            server.route({
+                method: 'GET',
+                path: '/route-request-get-allow',
+                handler: (request, reply) => reply({ ok: true }),
+                config: {
+                    plugins: {
+                        rbac: {
+                            apply: 'deny-overrides',
+                            rules: [
+                                {
+                                    target: ['any-of', { type: 'request:method', value: 'post' }],
+                                    'effect': 'deny'
+                                },
+                                {
+                                    'effect': 'permit'
+                                }
+                            ]
+                        }
+                    }
+                }
+            });
+
+            // Target matching on the first two rules will be always false, since the fields do not exist
+            server.route({
+                method: 'GET',
+                path: '/route-non-existing-field',
+                handler: (request, reply) => reply({ ok: true }),
+                config: {
+                    plugins: {
+                        rbac: {
+                            apply: 'permit-overrides',
+                            rules: [
+                                {   // Invalid field
+                                    target: ['any-of', { type: 'request:somefield', value: 'test' }],
+                                    'effect': 'permit'
+                                },
+                                {   // Invalid data source
+                                    target: ['any-of', { type: 'somesource:somefield', value: 'test' }],
+                                    'effect': 'permit'
+                                },
+                                {
+                                    'effect': 'deny'
+                                }
+                            ]
+                        }
+                    }
+                }
+            });
+
             done();
 
         });
@@ -190,11 +317,11 @@ experiment('Global RBAC policy, based on username', () => {
     });
 
 
-    test('Should have access to the route, with disabled ac', (done) => {
+    test('Should allow access to the route with params', (done) => {
 
         server.inject({
             method: 'GET',
-            url: '/disabled-ac',
+            url: '/route-params/validParam',
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
             }
@@ -205,6 +332,104 @@ experiment('Global RBAC policy, based on username', () => {
             done();
         });
     });
+
+    test('Should deny access to the route with denied param', (done) => {
+
+        server.inject({
+            method: 'GET',
+            url: '/route-params/forbiddenParam',
+            headers: {
+                authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
+            }
+        }, (response) => {
+
+            expect(response.statusCode).to.equal(401);
+
+            done();
+        });
+    });
+
+
+    test('Should allow access to the route with query param', (done) => {
+
+        server.inject({
+            method: 'GET',
+            url: '/route-query-params?param1=validParam',
+            headers: {
+                authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
+            }
+        }, (response) => {
+
+            expect(response.statusCode).to.equal(200);
+
+            done();
+        });
+    });
+
+    test('Should deny access to the route with denied query param', (done) => {
+
+        server.inject({
+            method: 'GET',
+            url: '/route-query-params?param1=forbiddenParam',
+            headers: {
+                authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
+            }
+        }, (response) => {
+
+            expect(response.statusCode).to.equal(401);
+
+            done();
+        });
+    });
+
+    test('Should deny access to the route with get request method', (done) => {
+
+        server.inject({
+            method: 'GET',
+            url: '/route-request-get-deny',
+            headers: {
+                authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
+            }
+        }, (response) => {
+
+            expect(response.statusCode).to.equal(401);
+
+            done();
+        });
+    });
+
+    test('Should allow access to the route with get request method', (done) => {
+
+        server.inject({
+            method: 'GET',
+            url: '/route-request-get-allow',
+            headers: {
+                authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
+            }
+        }, (response) => {
+
+            expect(response.statusCode).to.equal(200);
+
+            done();
+        });
+    });
+
+    test('Should deny access to the route with get request method', (done) => {
+
+        server.inject({
+            method: 'GET',
+            url: '/route-non-existing-field',
+            headers: {
+                authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
+            }
+        }, (response) => {
+
+            expect(response.statusCode).to.equal(401);
+
+            done();
+        });
+    });
+
 });
 
 
