@@ -219,6 +219,33 @@ experiment('Global RBAC policy, based on username', () => {
                 }
             });
 
+            // Target matching on the first two rules will be always false, since the fields do not exist
+            server.route({
+                method: 'GET',
+                path: '/route-non-existing-field',
+                handler: (request, reply) => reply({ ok: true }),
+                config: {
+                    plugins: {
+                        rbac: {
+                            apply: 'permit-overrides',
+                            rules: [
+                                {   // Invalid field
+                                    target: ['any-of', { type: 'request:somefield', value: 'test' }],
+                                    'effect': 'permit'
+                                },
+                                {   // Invalid data source
+                                    target: ['any-of', { type: 'somesource:somefield', value: 'test' }],
+                                    'effect': 'permit'
+                                },
+                                {
+                                    'effect': 'deny'
+                                }
+                            ]
+                        }
+                    }
+                }
+            });
+
             done();
 
         });
@@ -382,6 +409,22 @@ experiment('Global RBAC policy, based on username', () => {
         }, (response) => {
 
             expect(response.statusCode).to.equal(200);
+
+            done();
+        });
+    });
+
+    test('Should deny access to the route with get request method', (done) => {
+
+        server.inject({
+            method: 'GET',
+            url: '/route-non-existing-field',
+            headers: {
+                authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
+            }
+        }, (response) => {
+
+            expect(response.statusCode).to.equal(401);
 
             done();
         });
