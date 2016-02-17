@@ -11,6 +11,7 @@
 
 ## Versions
 
+* `2.0.0` - Simplified target (updated rbac-core to `2.0.0`)
 * `1.3.0` - Use more data for target matching
 * `1.2.0` - Global default configuration is now possible
 * `1.1.0` - Added ability to dynamically retrieve policies for the route

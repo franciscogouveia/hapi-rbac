@@ -34,22 +34,20 @@ If there are rules configured, but no rules can applied to a certain case, the a
 Targets are the conditions which will define if a policy set, policy or rule apply in a request.
 If the policy set, policy or rule should always apply, you can simply omit the `target`.
 
-When present, it should be an array, where the first element is a string.
-This first element should specify how the multiple targets should be matched.
+When present, it can either be a target element or an array of target elements.
 
-There are two possibilities:
-
-* `any-of` - You can think of it as an __OR__ operator
-* `all-of` - You can think of it as an __AND__ operator
-
-The other elements of the array are the matching subjects.
+When the array has more than one target element, they are combined with an `OR` condition.
+All the keys inside a target element are combined with an `AND` condition.
 
 Check the following examples:
 
-#### all-of
+#### AND
 
 ```js
-['all-of', {type: 'credentials:group', value: 'writer'}, {type: 'credentials:premium', value: true}]
+{
+  'credentials:group': 'writer',
+  'credentials:premium': true
+}
 ```
 
 With this target, only users in group `writer` **and** with `premium` account will match.
@@ -65,7 +63,7 @@ So, if the logged in user has the following `request.auth.credentials` document:
 }
 ```
 
-Then, the *rule* or *policy* with the configured *target* will be evaluated.
+Then, the *rule* or *policy* with the configured *target* will be evaluated, because the target applies.
 
 But, if the logged in user has one of the following `request.auth.credentials` documents:
 
@@ -88,12 +86,22 @@ But, if the logged in user has one of the following `request.auth.credentials` d
 ```
 
 Then, the rule or policy with the configured target will not be evaluated.
-Since the match used is `all-of`, the user doesn't match the target.
+Since the match used is `AND`, the user doesn't match the target.
 
-#### any-of
+#### OR
 
 ```
-['any-of', {type: 'credentials:group', value: 'writer'}, {type: 'credentials:premium', value: true}, {type: 'credentials:username', value: 'user00002'}]
+[
+  {
+    'credentials:group': 'writer'
+  },
+  {
+    'credentials:premium': true
+  },
+  {
+    'credentials:username': 'user00002'
+  }
+]
 ```
 
 With this target, any user in the group `writer` **or** with `premium` account **or** with username `user00002` will be matched.
@@ -199,7 +207,7 @@ Example
 
 ```
 {
-  target: ['any-of', {type: 'blocked', value: true}], // if the user is blocked
+  target: {'credentials:blocked': true}, // if the user is blocked
   effect: 'deny'  // then deny
 }
 ```
@@ -217,15 +225,19 @@ Example
 
 ```js
 {
-  target: ['all-of', {type: 'group', value: 'writer'}, {type: 'premium', value: true}], // if writer AND premium account
+  // if writer AND premium account
+  target: {
+    'credentials:group': 'writer',
+    'credentials:premium': true
+  },
   apply: 'deny-overrides', // permit, unless one denies
   rules: [
     {
-      target: ['any-of', {type: 'username', value: 'bad_user'}], // if the username is bad_user
+      target: { 'credentials:username': 'bad_user' }, // if the username is bad_user
       effect: 'deny'  // then deny
     },
     {
-      target: ['any-of', {type: 'blocked', value: true}], // if the user is blocked
+      target: { 'credentials:blocked': true }, // if the user is blocked
       effect: 'deny'  // then deny
     },
     {
@@ -248,19 +260,19 @@ Example
 
 ```js
 {
-  target: ['any-of', {type: 'group', value: 'writer'}, {type: 'group', value: 'publisher'}], // writer OR publisher
+  target: [{ 'credentials:group': 'writer' }, { 'credentials:group': 'publisher'}], // writer OR publisher
   apply: 'permit-overrides', // deny, unless one permits
   policies: [
     {
-      target: ['all-of', {type: 'group', value: 'writer'}, {type: 'premium', value: true}], // if writer AND premium account
+      target: { 'credentials:group': 'writer', 'credentials:premium': true }, // if writer AND premium account
       apply: 'deny-overrides', // permit, unless one denies
       rules: [
         {
-          target: ['any-of', {type: 'username', value: 'bad_user'}], // if the username is bad_user
+          target: { 'credentials:username': 'bad_user'}, // if the username is bad_user
           effect: 'deny'  // then deny
         },
         {
-          target: ['any-of', {type: 'blocked', value: true}], // if the user is blocked
+          target: { 'credentials:blocked': true }, // if the user is blocked
           effect: 'deny'  // then deny
         },
         {
@@ -269,11 +281,11 @@ Example
       ]
     },
     {
-      target: ['all-of', {type: 'premium', value: false}], // if (writer OR publisher) AND no premium account
+      target: { 'credentials:premium': false }, // if (writer OR publisher) AND no premium account
       apply: 'permit-overrides', // deny, unless one permits
       rules: [
         {
-          target: ['any-of', {type: 'username', value: 'special_user'}], // if the username is special_user
+          target: { 'credentials:username': 'special_user' }, // if the username is special_user
           effect: 'permit'  // then permit
         },
         {
@@ -296,11 +308,11 @@ server.register({
   register: require('hapi-rbac'),
   options: {
     policy: {
-      target: ['any-of', {type: 'group', value: 'readers'}],
+      target: { 'credentials:group': 'readers' },
       apply: 'deny-overrides', // Combinatory algorithm
       rules: [
         {
-          target: ['any-of', {type: 'username', value: 'bad_guy'}],
+          target: { 'credentials:username': 'bad_guy' },
           effect: 'deny'
         },
         {
@@ -333,11 +345,11 @@ server.route({
   config: {
     plugins: {
       rbac: {
-        target: ['any-of', {type: 'group', value: 'readers'}],
+        target: { 'credentials:group': 'readers' },
         apply: 'deny-overrides', // Combinatory algorithm
         rules: [
           {
-            target: ['any-of', {type: 'username', value: 'bad_guy'}],
+            target: { 'credentials:username': 'bad_guy' },
             effect: 'deny'
           },
           {
@@ -415,11 +427,11 @@ In this example, it is assumed that your policies have a `resource` key with `pa
     path: '/example',
     method: 'get'
   },
-  target: ['any-of', {type: 'group', value: 'readers'}],
+  target: { 'credentials:group': 'readers' },
   apply: 'deny-overrides', // Combinatory algorithm
   rules: [
     {
-      target: ['any-of', {type: 'username', value: 'bad_guy'}],
+      target: { 'credentials:username': 'bad_guy' },
       effect: 'deny'
     },
     {

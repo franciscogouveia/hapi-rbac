@@ -177,7 +177,7 @@ experiment('RBAC policy, based on username', () => {
             config: {
                 plugins: {
                     rbac: {
-                        target: ['any-of', { type: 'username', value: 'sg1001' }],
+                        target: { 'credentials:username': 'sg1001' },
                         apply: 'permit-overrides',
                         rules: [
                             {
@@ -212,7 +212,7 @@ experiment('RBAC policy, based on username', () => {
             config: {
                 plugins: {
                     rbac: {
-                        target: ['any-of', { type: 'username', value: 'sg1001' }],
+                        target: { 'credentials:username': 'sg1001' },
                         apply: 'permit-overrides',
                         rules: [
                             {
@@ -312,7 +312,7 @@ experiment('RBAC policy, based on group membership', () => {
             config: {
                 plugins: {
                     rbac: {
-                        target: ['any-of', { type: 'group', value: 'admin' }],
+                        target: { 'credentials:group': 'admin' },
                         apply: 'permit-overrides',
                         rules: [
                             {
@@ -347,7 +347,7 @@ experiment('RBAC policy, based on group membership', () => {
             config: {
                 plugins: {
                     rbac: {
-                        target: ['any-of', { type: 'group', value: 'reader' }],
+                        target: { 'credentials:group': 'reader' },
                         apply: 'permit-overrides',
                         rules: [
                             {
@@ -382,7 +382,7 @@ experiment('RBAC policy, based on group membership', () => {
             config: {
                 plugins: {
                     rbac: {
-                        target: ['any-of', { type: 'group', value: 'reader' }, { type: 'group', value: 'admin' }],
+                        target: [{ 'credentials:group': 'reader' }, { 'credentials:group': 'admin' }],
                         apply: 'permit-overrides',
                         rules: [
                             {
@@ -418,7 +418,7 @@ experiment('RBAC policy, based on group membership', () => {
             config: {
                 plugins: {
                     rbac: {
-                        target: ['any-of', { type: 'group', value: 'reader' }, { type: 'group', value: 'watcher' }],
+                        target: [{ 'credentials:group': 'reader' }, { 'credentials:group': 'watcher' }],
                         apply: 'permit-overrides',
                         rules: [
                             {
@@ -453,7 +453,7 @@ experiment('RBAC policy, based on group membership', () => {
             config: {
                 plugins: {
                     rbac: {
-                        target: ['all-of', { type: 'group', value: 'reader' }, { type: 'group', value: 'admin' }],
+                        target: { 'credentials:group': ['reader', 'admin'] },
                         apply: 'permit-overrides',
                         rules: [
                             {
@@ -488,7 +488,7 @@ experiment('RBAC policy, based on group membership', () => {
             config: {
                 plugins: {
                     rbac: {
-                        target: ['all-of', { type: 'group', value: 'publisher' }, { type: 'group', value: 'admin' }],
+                        target: { 'credentials:group': 'publisher', 'credentials:group': 'admin' },
                         apply: 'permit-overrides',
                         rules: [
                             {
@@ -583,7 +583,7 @@ experiment('RBAC rule, based on username', () => {
                         apply: 'permit-overrides',
                         rules: [
                             {
-                                target: ['any-of', { type: 'username', value: 'sg1004' }],
+                                target: { 'credentials:username': 'sg1004' },
                                 effect: 'permit'
                             }
                         ]
@@ -618,7 +618,7 @@ experiment('RBAC rule, based on username', () => {
                         apply: 'permit-overrides',
                         rules: [
                             {
-                                target: ['any-of', { type: 'username', value: 'sg1004' }],
+                                target: { 'credentials:username': 'sg1004' },
                                 effect: 'deny'
                             }
                         ]
@@ -719,7 +719,7 @@ experiment('RBAC rule, based on group membership', () => {
                         apply: 'permit-overrides',
                         rules: [
                             {
-                                target: ['any-of', { type: 'group', value: 'admin' }],
+                                target: { 'credentials:group': 'admin' },
                                 effect: 'permit'
                             }
                         ]
@@ -754,7 +754,7 @@ experiment('RBAC rule, based on group membership', () => {
                         apply: 'permit-overrides',
                         rules: [
                             {
-                                target: ['any-of', { type: 'group', value: 'reader' }],
+                                target: { 'credentials:group': 'reader' },
                                 effect: 'permit'
                             }
                         ]
@@ -789,7 +789,7 @@ experiment('RBAC rule, based on group membership', () => {
                         apply: 'permit-overrides',
                         rules: [
                             {
-                                target: ['any-of', { type: 'group', value: 'reader' }, { type: 'group', value: 'admin' }],
+                                target: [{ 'credentials:group': 'reader' }, { 'credentials:group': 'admin' }],
                                 effect: 'permit'
                             }
                         ]
@@ -825,7 +825,7 @@ experiment('RBAC rule, based on group membership', () => {
                         apply: 'permit-overrides',
                         rules: [
                             {
-                                target: ['any-of', { type: 'group', value: 'reader' }, { type: 'group', value: 'watcher' }],
+                                target: [{ 'credentials:group': 'reader' }, { 'credentials:group': 'watcher' }],
                                 effect: 'permit'
                             }
                         ]
@@ -860,7 +860,7 @@ experiment('RBAC rule, based on group membership', () => {
                         apply: 'permit-overrides',
                         rules: [
                             {
-                                target: ['all-of', { type: 'group', value: 'reader' }, { type: 'group', value: 'admin' }],
+                                target: { 'credentials:group': ['reader', 'admin']},
                                 effect: 'permit'
                             }
                         ]
@@ -895,10 +895,7 @@ experiment('RBAC rule, based on group membership', () => {
                         apply: 'permit-overrides',
                         rules: [
                             {
-                                target: ['all-of', { type: 'group', value: 'publisher' }, {
-                                    type: 'group',
-                                    value: 'admin'
-                                }],
+                                target: { 'credentials:group': ['publisher', 'admin']},
                                 effect: 'permit'
                             }
                         ]
@@ -987,11 +984,11 @@ experiment('RBAC complex rules', () => {
                 config: {
                     plugins: {
                         rbac: {
-                            target: ['any-of', { type: 'group', value: 'admin' }],
+                            target: { 'credentials:group': 'admin' },
                             apply: 'deny-overrides',
                             rules: [
                                 {
-                                    target: ['any-of', { type: 'username', value: 'sg1007' }],
+                                    target: { 'credentials:username': 'sg1007' },
                                     effect: 'deny'
                                 },
                                 {
@@ -1111,7 +1108,7 @@ experiment('Dynamic RBAC policy with callback function', () => {
 
                         /* Usually retrieved from a DB... */
                         const policy = {
-                            target: ['any-of', { type: 'username', value: 'sg1001' }],
+                            target: { 'credentials:username': 'sg1001' },
                             apply: 'permit-overrides',
                             rules: [
                                 {
@@ -1153,7 +1150,7 @@ experiment('Dynamic RBAC policy with callback function', () => {
 
                         /* Usually retrieved from a DB... */
                         const policy = {
-                            target: ['any-of', { type: 'username', value: 'sg1001' }],
+                            target: { 'credentials:username': 'sg1001' },
                             apply: 'permit-overrides',
                             rules: [
                                 {
