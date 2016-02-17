@@ -7,7 +7,7 @@
 
 > A **Rule Based Access Control** module for [hapi](https://github.com/hapijs/hapi).
 
-> This is inspired by the [XACML](https://fr.wikipedia.org/wiki/XACML) policies.
+> This is inspired by the [XACML](https://en.wikipedia.org/wiki/XACML) policies.
 
 ## Versions
 
