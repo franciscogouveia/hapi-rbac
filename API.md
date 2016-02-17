@@ -1,4 +1,4 @@
-# 1.3.0 API Reference
+# 2.0.0 API Reference
 
 
 * [`Terms`](#terms)
