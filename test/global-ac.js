@@ -54,7 +54,7 @@ experiment('Global RBAC policy, based on username', () => {
                 register: require('../'),
                 options: {
                     policy: {
-                        target: ['any-of', { type: 'username', value: 'sg1001' }],
+                        target: { 'credentials:username': 'sg1001' },
                         apply: 'permit-overrides',
                         rules: [
                             {
@@ -96,7 +96,7 @@ experiment('Global RBAC policy, based on username', () => {
                 config: {
                     plugins: {
                         rbac: {
-                            target: ['any-of', { type: 'username', value: 'sg1002' }],
+                            target: { 'credentials:username': 'sg1002' },
                             apply: 'permit-overrides',
                             rules: [
                                 {
@@ -132,7 +132,7 @@ experiment('Global RBAC policy, based on username', () => {
                             apply: 'deny-overrides',
                             rules: [
                                 {
-                                    target: ['any-of', { type: 'params:param1', value: 'forbiddenParam' }],
+                                    target: { 'params:param1': 'forbiddenParam' },
                                     'effect': 'deny'
                                 },
                                 {
@@ -161,7 +161,7 @@ experiment('Global RBAC policy, based on username', () => {
                             apply: 'deny-overrides',
                             rules: [
                                 {
-                                    target: ['any-of', { type: 'query:param1', value: 'forbiddenParam' }],
+                                    target: { 'query:param1': 'forbiddenParam' },
                                     'effect': 'deny'
                                 },
                                 {
@@ -184,7 +184,7 @@ experiment('Global RBAC policy, based on username', () => {
                             apply: 'deny-overrides',
                             rules: [
                                 {
-                                    target: ['any-of', { type: 'request:method', value: 'get' }],
+                                    target: { 'request:method': 'get' },
                                     'effect': 'deny'
                                 },
                                 {
@@ -207,7 +207,7 @@ experiment('Global RBAC policy, based on username', () => {
                             apply: 'deny-overrides',
                             rules: [
                                 {
-                                    target: ['any-of', { type: 'request:method', value: 'post' }],
+                                    target: { 'request:method': 'post' },
                                     'effect': 'deny'
                                 },
                                 {
@@ -230,11 +230,11 @@ experiment('Global RBAC policy, based on username', () => {
                             apply: 'permit-overrides',
                             rules: [
                                 {   // Invalid field
-                                    target: ['any-of', { type: 'request:somefield', value: 'test' }],
+                                    target: { 'request:somefield': 'test' },
                                     'effect': 'permit'
                                 },
                                 {   // Invalid data source
-                                    target: ['any-of', { type: 'somesource:somefield', value: 'test' }],
+                                    target: { 'somesource:somefield': 'test' },
                                     'effect': 'permit'
                                 },
                                 {
@@ -478,7 +478,7 @@ experiment('Global dynamic RBAC policy with callback function', () => {
 
                         /* Usually retrieved from a DB... */
                         const policy = {
-                            target: ['any-of', { type: 'username', value: 'sg1001' }],
+                            target: { 'credentials:username': 'sg1001' },
                             apply: 'permit-overrides',
                             rules: [
                                 {
@@ -526,7 +526,7 @@ experiment('Global dynamic RBAC policy with callback function', () => {
 
                             /* Usually retrieved from a DB... */
                             const policy = {
-                                target: ['any-of', { type: 'username', value: 'sg1002' }],
+                                target: { 'credentials:username': 'sg1002' },
                                 apply: 'permit-overrides',
                                 rules: [
                                     {
