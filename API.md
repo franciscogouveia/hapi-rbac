@@ -3,14 +3,15 @@
 
 * [`Terms`](#terms)
 * [`Setting up a policy`](#setting-up-a-policy)
-  * [`Target`](#target)
-  * [`Policy Set`](#policy-set)
-  * [`Policy`](#policy)
+  * [`Target`](#target-matching)
   * [`Rule`](#rule)
+  * [`Policy`](#policy)
+  * [`Policy Set`](#policy-set)
 * [`Configuration`](#configuration)
   * [`Global policy`](#global-policy)
   * [`Route policy`](#route-policy)
   * [`Dynamic policy`](#dynamic-policy)
+  * [`Response code`](#defining-the-response-code)
 
 # hapi-rbac
 
@@ -483,10 +484,25 @@ server.route({
 ```
 
 
+### Defining the response code
 
+When importing the `hapi-rbac` plugin, it is possible to define what are the response codes for `deny` and `undetermined` cases:
 
+```js
+server.register({
+  register: require('hapi-rbac'),
+  options: {
+    responseCode: {
+        onDeny: 403,
+        onUndetermined: 403
+    }
+  }
+}, function(err) {
+  ...
+});
+```
 
-
+This configuration is applied to all the cases.
 
 
 
