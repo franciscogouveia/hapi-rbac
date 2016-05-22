@@ -12,6 +12,7 @@
   * [`Route policy`](#route-policy)
   * [`Dynamic policy`](#dynamic-policy)
   * [`Response code`](#defining-the-response-code)
+  * [`Data retrievers`](#data-retrievers)
 
 # hapi-rbac
 
@@ -506,11 +507,58 @@ This configuration is applied to all the cases.
 
 
 
+### Data retrievers
 
+You can define your own data sources for target matching. To do so, you can define in the module options an array of dataRetrievers.
 
+```js
+server.register({
+  register: require('hapi-rbac'),
+  options: {
+    dataRetrievers: [
+        {
+            handles: ['document'], // Name the source this data retriever handles
+            handler: (source, key, context, callback) => {
 
+                // You can use the key as you wish
+                // e.g. key: 12345.name
+                const splitKey = key.split('.');
 
+                const id = splitKey[0];
+                const field = splitKey[1];
 
+                const query = {
+                    _id: id,
+                    // In hapi-rbac, the context is the Request object
+                    user: Hoek.reach(context, 'auth.credentials._id')
+                };
+
+                db.collection('documents').findOne(query, (err, result) => {
+
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    // Pass the value to the callback
+                    callback(null, Hoek.reach(result, field));
+                });
+            }
+        }
+    ]
+  }
+}, function(err) {
+  ...
+});
+```
+
+The, you can use it in your targets:
+
+```js
+{
+    target: { 'document:12345.title': 'The Swallow\'s Tale' },
+    ...
+}
+```
 
 
 
