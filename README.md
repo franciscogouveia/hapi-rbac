@@ -11,7 +11,7 @@
 
 ## Versions
 
-* `2.1.0` - Usage of user defined data retrievals for target matching
+* `2.1.0` - Usage of user defined data retrievals for target matching. Nested properties on target keys.
 * `2.0.0` - Simplified target (updated [rbac-core](https://github.com/franciscogouveia/rbac-core) to `2.0.0`)
 * `1.3.0` - Use more data for target matching
 * `1.2.0` - Global default configuration is now possible
