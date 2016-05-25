@@ -1667,3 +1667,153 @@ experiment('Setting configurable response code for both undetermined and deny ca
         });
     });
 });
+
+experiment('Setting configurable method to execute on error', () => {
+
+    let server;
+
+    before((done) => {
+        // Set up the hapi server route
+        server = new Hapi.Server();
+
+        server.connection();
+
+        const users = { };
+
+        users.sg1001 = {
+            'scope': 'admin',
+            'firstName': 'Some',
+            'lastName': 'Guy',
+            'username': 'sg1001',
+            'password': 'pwtest'
+        };
+
+
+        users.sg1002 = {
+            'scope': 'admin',
+            'firstName': 'Some',
+            'lastName': 'Guy',
+            'username': 'sg1002',
+            'password': 'pwtest'
+        };
+
+        server.register([
+            {
+                register: require('hapi-auth-basic')
+            },
+            {
+                register: require('../'),
+                options: {
+                    onError: function(request, reply, err) {
+                        reply(Boom.create(403, err.message));
+                    }
+                }
+            }
+        ], (err) => {
+
+            if (err) {
+                return done(err);
+            }
+
+            server.auth.strategy('default', 'basic', 'required', {
+                validateFunc: (request, username, password, callback) => {
+
+                    if (!users[username] || users[username].password !== password) {
+                        return callback(Boom.unauthorized('Wrong credentials'), false);
+                    }
+
+                    callback(null, true, users[username]);
+                }
+            });
+
+            done();
+
+        });
+
+    });
+
+    test('The access should be denied (request do apply to the target)', (done) => {
+
+        server.route({
+            method: 'GET',
+            path: '/access-denied',
+            handler: (request, reply) => reply({ ok: true }),
+            config: {
+                plugins: {
+
+                    rbac: (request, callback) => {
+
+                        /* Usually retrieved from a DB... */
+                        const policy = {
+                            target: { 'credentials:username': 'sg1001' },
+                            apply: 'permit-overrides',
+                            rules: [
+                                {
+                                    'effect': 'deny'
+                                }
+                            ]
+                        };
+
+                        callback(null, policy);
+                    }
+                }
+            }
+        });
+
+        server.inject({
+            method: 'GET',
+            url: '/access-denied',
+            headers: {
+                authorization: 'Basic ' + (new Buffer('sg1001:pwtest', 'utf8')).toString('base64')
+            }
+        }, (response) => {
+
+            expect(response.statusCode).to.equal(403);
+
+            done();
+        });
+    });
+
+
+    test('The access should be denied (request do not apply to the target)', (done) => {
+
+        server.route({
+            method: 'GET',
+            path: '/access-undetermined',
+            handler: (request, reply) => reply({ ok: true }),
+            config: {
+                plugins: {
+
+                    rbac: (request, callback) => {
+
+                        /* Usually retrieved from a DB... */
+                        const policy = {
+                            target: { 'credentials:username': 'sg1001' },
+                            apply: 'permit-overrides',
+                            rules: [
+                                {
+                                    'effect': 'deny'
+                                }
+                            ]
+                        };
+
+                        callback(null, policy);
+                    }
+                }
+            }
+        });
+
+        server.inject({
+            method: 'GET',
+            url: '/access-undetermined',
+            headers: {
+                authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
+            }
+        }, (response) => {
+
+            expect(response.statusCode).to.equal(403);
+
+            done();
+        });
+    });
+});
