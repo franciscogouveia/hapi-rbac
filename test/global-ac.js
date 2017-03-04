@@ -246,6 +246,59 @@ experiment('Global RBAC policy, based on username', () => {
                 }
             });
 
+            // Target matching between two fields
+            server.route({
+                method: 'GET',
+                path: '/match-fields/{id}',
+                handler: (request, reply) => reply({ ok: true }),
+                config: {
+                    plugins: {
+                        rbac: {
+                            apply: 'permit-overrides',
+                            rules: [
+                                {
+                                    target: {
+                                        // Valid match: /match-fields/123?test=123
+                                        // Invalid match: /match-fields/123?test=456
+                                        'params:id': { field: 'query:test' }
+                                    },
+                                    'effect': 'permit'
+                                },
+                                {
+                                    'effect': 'deny'
+                                }
+                            ]
+                        }
+                    }
+                }
+            });
+
+            // Target matching using RegExp
+            server.route({
+                method: 'GET',
+                path: '/regex-match',
+                handler: (request, reply) => reply({ ok: true }),
+                config: {
+                    plugins: {
+                        rbac: {
+                            apply: 'permit-overrides',
+                            rules: [
+                                {
+                                    // Allow all users which last name starts with Other
+                                    target: {
+                                        'credentials:lastName': /^Other.*$/
+                                    },
+                                    'effect': 'permit'
+                                },
+                                {
+                                    'effect': 'deny'
+                                }
+                            ]
+                        }
+                    }
+                }
+            });
+
             done();
 
         });
@@ -421,6 +474,70 @@ experiment('Global RBAC policy, based on username', () => {
             url: '/route-non-existing-field',
             headers: {
                 authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
+            }
+        }, (response) => {
+
+            expect(response.statusCode).to.equal(401);
+
+            done();
+        });
+    });
+
+    test('Should allow access to the route with matching param and query fields', (done) => {
+
+        server.inject({
+            method: 'GET',
+            url: '/match-fields/123?test=123',
+            headers: {
+                authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
+            }
+        }, (response) => {
+
+            expect(response.statusCode).to.equal(200);
+
+            done();
+        });
+    });
+
+    test('Should deny access to the route with non-matching param and query fields', (done) => {
+
+        server.inject({
+            method: 'GET',
+            url: '/match-fields/123?test=456',
+            headers: {
+                authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
+            }
+        }, (response) => {
+
+            expect(response.statusCode).to.equal(401);
+
+            done();
+        });
+    });
+
+    test('Should have access to the route, with policy targeting a regex of last name', (done) => {
+
+        server.inject({
+            method: 'GET',
+            url: '/regex-match',
+            headers: {
+                authorization: 'Basic ' + (new Buffer('sg1002:pwtest', 'utf8')).toString('base64')
+            }
+        }, (response) => {
+
+            expect(response.statusCode).to.equal(200);
+
+            done();
+        });
+    });
+
+    test('Should not have access to the route, with policy targeting a regex of last name', (done) => {
+
+        server.inject({
+            method: 'GET',
+            url: '/regex-match',
+            headers: {
+                authorization: 'Basic ' + (new Buffer('sg1001:pwtest', 'utf8')).toString('base64')
             }
         }, (response) => {
 
