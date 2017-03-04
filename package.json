@@ -33,7 +33,7 @@
     "boom": "4.0.0",
     "hoek": "4.1.0",
     "joi": "9.0.4",
-    "rbac-core": "2.0.2"
+    "rbac-core": "3.0.0"
   },
   "devDependencies": {
     "code": "4.0.0",
