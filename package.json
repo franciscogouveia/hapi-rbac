@@ -27,22 +27,22 @@
     "indent": "js-beautify lib/index.js"
   },
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=8.0.0"
   },
   "dependencies": {
-    "boom": "4.0.0",
-    "hoek": "4.1.0",
-    "joi": "9.0.4",
-    "rbac-core": "3.0.0"
+    "boom": "^7.3.0",
+    "hoek": "^6.1.2",
+    "joi": "14.3.1",
+    "rbac-core": "^3.0.0"
   },
   "devDependencies": {
     "code": "4.0.0",
     "eslint-config-hapi": "^10.0.0",
     "eslint-plugin-hapi": "^4.0.0",
     "coveralls": "^2.11.9",
-    "hapi": "15.0.3",
-    "hapi-auth-basic": "^4.1.0",
+    "hapi": "17.8.1",
+    "hapi-auth-basic": "5.0.0",
     "js-beautify": "^1.6.2",
-    "lab": "11.0.1"
+    "lab": "^18.0.1"
   }
 }

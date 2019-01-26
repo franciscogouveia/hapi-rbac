@@ -11,6 +11,7 @@
 
 ## Versions
 
+* `3.0.0` - Add Hapi17 support
 * `2.3.0` - Ability to use RegExp to match target values. Ability to match field to field. (updated [rbac-core](https://github.com/franciscogouveia/rbac-core) to `3.0.0`)
 * `2.2.0` - Customized error responses
 * `2.1.0` - Usage of user defined data retrievals for target matching. Nested properties on target keys.
@@ -32,11 +33,19 @@ npm install --save hapi-rbac
 Then, import the module in your hapi server instance.
 
 ```js
-server.register({
-  register: require('hapi-rbac')
-}, function(err) {
-  ...
-});
+async () => {
+    try {
+      await server.register({
+        plugin: require('hapi-rbac'),
+        options: {
+          // rbac-option See API reference
+        }
+      });
+    } catch(er) {
+      // ...
+    }
+}
+
 ```
 
 Then, configure your policies. Check the [API Reference](https://github.com/franciscogouveia/hapi-rbac/blob/master/API.md).
