@@ -307,7 +307,7 @@ If you wish to define a default access control policy for the routes, you can do
 
 ```js
 server.register({
-  register: require('hapi-rbac'),
+  plugin: require('hapi-rbac'),
   options: {
     policy: {
       target: { 'credentials:group': 'readers' },
@@ -323,8 +323,6 @@ server.register({
       ]
     }
   }
-}, function(err) {
-  ...
 });
 ```
 
@@ -378,7 +376,7 @@ server.route({
       ok: true
     });
   },
-  config: {
+  options: {
     plugins: {
       rbac: 'none'
     }
@@ -392,9 +390,9 @@ It is also possible to retrieve the policies dynamically (e.g.: from a database)
 
 ```js
 server.register({
-  register: require('hapi-rbac'),
+  plugin: require('hapi-rbac'),
   options: {
-    policy: function(request, callback) {
+    async policy(request) {
 
       /* Retrieve your policies from a database */
       const query = {
@@ -403,28 +401,20 @@ server.register({
           method: request.route.method
         }
       };
-
-      db.collection('policies').findOne(query, function(err, policy) {
-
-        if(err) {
-          return callback(err);
-        }
-
-        // callback with the found policy
-        // if policy is null, then hapi-rbac assumes that there is no policy configured for the route
-        callback(null, policy);
-      });
+      
+      // if policy is null, then hapi-rbac assumes that there is no policy configured for the route 
+      const policy = await db.collection('policies').findOne(query)
+      
+      return policy
     }
   }
-}, function(err) {
-  ...
 });
 ```
 
 In this example, it is assumed that your policies have a `resource` key with `path` and `method` sub-keys.
 
 ```js
-{
+const policy ={
   resource: { // resource identifies what is being requested
     path: '/example',
     method: 'get'
@@ -443,22 +433,20 @@ In this example, it is assumed that your policies have a `resource` key with `pa
 }
 ```
 
-
-
 You can also have dynamic access control policy retrieval at the route level:
 
 ```js
 server.route({
   method: 'GET',
   path: '/example',
-  handler: function(request, reply) {
-    reply({
+  handler() {
+    return {
       ok: true
-    });
+    };
   },
-  config: {
+  options: {
     plugins: {
-      rbac: function(request, callback) {
+      async rbac(request) {
 
         /* Retrieve your policies from a database */
         const query = {
@@ -468,16 +456,9 @@ server.route({
           }
         };
 
-        db.collection('policies').findOne(query, function(err, policy) {
-
-          if(err) {
-            return callback(err);
-          }
-
-          // callback with the found policy
-          // if policy is null, then hapi-rbac assumes that there is no policy configured for the route
-          callback(null, policy);
-        });
+        const policy = await db.collection('policies').findOne(query)
+              
+        return policy
       }
     }
   }
@@ -491,15 +472,13 @@ When importing the `hapi-rbac` plugin, it is possible to define what are the res
 
 ```js
 server.register({
-  register: require('hapi-rbac'),
+  plugin: require('hapi-rbac'),
   options: {
     responseCode: {
         onDeny: 403,
         onUndetermined: 403
     }
   }
-}, function(err) {
-  ...
 });
 ```
 
@@ -513,9 +492,9 @@ You can define your own data sources for target matching. To do so, you can defi
 
 ```js
 server.register({
-  register: require('hapi-rbac'),
+  plugin: require('hapi-rbac'),
   options: {
-    dataRetrievers: [
+     dataRetrievers: [
         {
             handles: ['document'], // Name the source this data retriever handles
             handler: (source, key, context, callback) => {
@@ -544,10 +523,8 @@ server.register({
                 });
             }
         }
-    ]
+     ]
   }
-}, function(err) {
-  ...
 });
 ```
 
@@ -559,19 +536,6 @@ The, you can use it in your targets:
     ...
 }
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 [npm-badge]: https://img.shields.io/npm/v/hapi-rbac.svg
 [npm-url]: https://npmjs.com/package/hapi-rbac
